@@ -135,8 +135,11 @@ Total: **~$80–$150** for a starter indoor show.
 - Effects: solid, fade, chase, rainbow
 - ✅ **Deliverable:** Browser shows a virtual strip running effects
 
-### Phase 2 — Web Control Panel (Weeks 3–4)
-- REST endpoints: `/effects`, `/start`, `/stop`, `/color`, `/brightness`
+### Phase 2 — Web Control Panel (Weeks 3–4) ✅
+- REST endpoints: `/api/effects`, `/api/status`, `/api/start`, `/api/stop`,
+  `/api/effect`, `/api/color`, `/api/brightness`
+- Live `ShowState` shared between engine + REST handlers (effect/color/
+  brightness/play swap mid-frame)
 - Angular: color picker, effect selector, brightness slider, live status
 - ✅ **Deliverable:** Phone/laptop control of the virtual strip
 

@@ -1,16 +1,16 @@
-//! Fixed-rate frame engine that drives an [`Effect`] into a [`Renderer`].
+//! Fixed-rate frame engine that drives a [`ShowState`] into a [`Renderer`].
 
 use std::time::{Duration, Instant};
 
 use controller::{Renderer, Rgb};
 use tokio::time::{MissedTickBehavior, interval};
 
-use crate::{Effect, EffectContext};
+use crate::{EffectContext, SharedShow};
 
-/// Drives an effect at a fixed frame rate.
+/// Drives the live [`crate::ShowState`] at a fixed frame rate.
 pub struct Engine<R: Renderer> {
     renderer: R,
-    effect: Box<dyn Effect>,
+    show: SharedShow,
     fps: u32,
     buffer: Vec<Rgb>,
 }
@@ -21,12 +21,12 @@ impl<R: Renderer> Engine<R> {
     /// # Panics
     ///
     /// Panics if `fps` is 0.
-    pub fn new(renderer: R, effect: Box<dyn Effect>, fps: u32) -> Self {
+    pub fn new(renderer: R, show: SharedShow, fps: u32) -> Self {
         assert!(fps > 0, "fps must be > 0");
         let pixel_count = renderer.pixel_count();
         Self {
             renderer,
-            effect,
+            show,
             fps,
             buffer: vec![Rgb::BLACK; pixel_count],
         }
@@ -45,25 +45,26 @@ impl<R: Renderer> Engine<R> {
         let mut frame: u64 = 0;
         let pixel_count = self.renderer.pixel_count();
 
-        tracing::info!(
-            effect = self.effect.name(),
-            fps = self.fps,
-            pixel_count,
-            "engine started"
-        );
+        tracing::info!(fps = self.fps, pixel_count, "engine started");
 
         loop {
             ticker.tick().await;
             let elapsed_secs = started.elapsed().as_secs_f32();
 
-            self.effect.tick(
-                EffectContext {
-                    pixel_count,
-                    frame,
-                    elapsed_secs,
-                },
-                &mut self.buffer,
-            );
+            {
+                let mut show = match self.show.lock() {
+                    Ok(guard) => guard,
+                    Err(poisoned) => poisoned.into_inner(),
+                };
+                show.tick(
+                    EffectContext {
+                        pixel_count,
+                        frame,
+                        elapsed_secs,
+                    },
+                    &mut self.buffer,
+                );
+            }
 
             if let Err(err) = self.renderer.render(&self.buffer) {
                 tracing::error!(?err, "renderer rejected frame");

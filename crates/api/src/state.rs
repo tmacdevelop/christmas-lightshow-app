@@ -3,8 +3,10 @@
 use std::sync::Arc;
 
 use controller::VirtualRenderer;
+use sequencer::SharedShow;
 
 #[derive(Clone)]
 pub struct AppState {
     pub renderer: Arc<VirtualRenderer>,
+    pub show: SharedShow,
 }

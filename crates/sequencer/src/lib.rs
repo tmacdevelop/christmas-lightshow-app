@@ -9,8 +9,10 @@
 pub mod color;
 pub mod effects;
 mod engine;
+mod show;
 
 pub use engine::Engine;
+pub use show::{EffectKind, SharedShow, ShowState};
 
 use controller::Rgb;
 
