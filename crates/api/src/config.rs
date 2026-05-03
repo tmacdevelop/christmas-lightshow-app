@@ -1,6 +1,9 @@
 //! Runtime configuration loaded from `config.toml`.
 
-use std::{net::SocketAddr, path::{Path, PathBuf}};
+use std::{
+    net::SocketAddr,
+    path::{Path, PathBuf},
+};
 
 use sequencer::EffectKind;
 use serde::Deserialize;

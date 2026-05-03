@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# Pre-commit hook: ensure both Rust and Angular CI checks pass before a commit.
+#
+# Enable once per clone:
+#   git config core.hooksPath .githooks
+# (or run `./.githooks/install.sh`).
+#
+# Skip a single commit with:
+#   git commit --no-verify
+
+set -euo pipefail
+
+repo_root="$(git rev-parse --show-toplevel)"
+cd "$repo_root"
+
+# Only run the heavy checks when files relevant to that toolchain changed.
+staged="$(git diff --cached --name-only --diff-filter=ACMR)"
+
+run_rust=false
+run_ui=false
+case "$staged" in
+  *) ;;
+esac
+while IFS= read -r path; do
+  [ -z "$path" ] && continue
+  case "$path" in
+    *.rs|Cargo.toml|Cargo.lock|crates/*|rust-toolchain.toml|rustfmt.toml)
+      run_rust=true ;;
+    ui/*)
+      run_ui=true ;;
+    .github/workflows/*|.githooks/*)
+      run_rust=true; run_ui=true ;;
+  esac
+done <<< "$staged"
+
+if ! $run_rust && ! $run_ui; then
+  echo "pre-commit: no Rust or UI changes staged; skipping checks."
+  exit 0
+fi
+
+if $run_rust; then
+  echo "pre-commit: cargo fmt --all -- --check"
+  cargo fmt --all -- --check
+
+  echo "pre-commit: cargo clippy --workspace --all-targets -- -D warnings"
+  cargo clippy --workspace --all-targets -- -D warnings
+
+  echo "pre-commit: cargo test --workspace --all-targets"
+  cargo test --workspace --all-targets
+fi
+
+if $run_ui; then
+  cd ui
+
+  if [ ! -d node_modules ]; then
+    echo "pre-commit: ui/node_modules missing; running pnpm install"
+    pnpm install --frozen-lockfile
+  fi
+
+  echo "pre-commit: ng build (development)"
+  pnpm exec ng build --configuration development
+fi
+
+echo "pre-commit: all checks passed."

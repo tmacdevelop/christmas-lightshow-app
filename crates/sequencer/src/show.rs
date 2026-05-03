@@ -320,8 +320,7 @@ fn tick_sequence(sp: &mut SequencePlayback, ctx: EffectContext, out: &mut [Rgb])
                 sp.active_clip_idx = Some(idx);
                 sp.effect = Some(clip.kind.build(clip.color.into()));
             }
-            let clip_elapsed_secs =
-                t_ms.saturating_sub(clip.start_ms) as f32 / 1000.0;
+            let clip_elapsed_secs = t_ms.saturating_sub(clip.start_ms) as f32 / 1000.0;
             let clip_ctx = EffectContext {
                 pixel_count: ctx.pixel_count,
                 frame: ctx.frame,
