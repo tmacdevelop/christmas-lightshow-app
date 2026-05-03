@@ -7,8 +7,8 @@
 //! - `POST /api/start`      — resume playback.
 //! - `POST /api/stop`       — pause playback (engine emits black frames).
 //! - `POST /api/effect`     — `{"kind": "solid"|"fade"|"chase"|"rainbow"}`.
-//! - `POST /api/color`      — `{"r":0..255,"g":0..255,"b":0..255}`
-//!                            or `{"hex":"#rrggbb"}`.
+//! - `POST /api/color` — `{"r":0..255,"g":0..255,"b":0..255}`
+//!   or `{"hex":"#rrggbb"}`.
 //! - `POST /api/brightness` — `{"value": 0.0..1.0}`.
 
 use axum::{

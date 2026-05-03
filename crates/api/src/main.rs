@@ -4,9 +4,9 @@
 //! configured FPS, and exposes:
 //!
 //! - `GET  /healthz` — liveness probe.
-//! - `GET  /ws`      — WebSocket stream of pixel frames (binary by default,
-//!                     `?format=json` for debug).
-//! - `*    /api/*`   — REST control plane (see [`rest`] module).
+//! - `GET  /ws` — WebSocket stream of pixel frames (binary by default,
+//!   `?format=json` for debug).
+//! - `*    /api/*` — REST control plane (see [`rest`] module).
 
 mod config;
 mod rest;
