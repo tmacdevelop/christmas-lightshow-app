@@ -1,0 +1,63 @@
+<section class="flex h-full min-h-screen flex-col gap-4 bg-zinc-950 p-6 text-zinc-100">
+  <header class="flex flex-wrap items-center gap-3">
+    <h1 class="text-xl font-semibold tracking-tight">Christmas Light Show — Simulator</h1>
+    <span
+      class="ml-auto inline-flex items-center gap-2 rounded-full bg-zinc-900 px-3 py-1 text-sm"
+    >
+      <span class="h-2.5 w-2.5 rounded-full" [class]="statusClass()"></span>
+      {{ statusLabel() }}
+    </span>
+  </header>
+
+  <div
+    class="flex flex-wrap items-end gap-3 rounded-lg border border-zinc-800 bg-zinc-900 p-4"
+  >
+    <label class="flex flex-col text-sm">
+      <span class="mb-1 text-zinc-400">WebSocket URL</span>
+      <input
+        type="text"
+        class="w-72 rounded border border-zinc-700 bg-zinc-950 px-2 py-1 font-mono text-sm focus:border-emerald-500 focus:outline-none"
+        [ngModel]="url()"
+        (ngModelChange)="url.set($event)"
+        placeholder="/ws"
+      />
+    </label>
+    <button
+      type="button"
+      class="rounded bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="state() === 'open' || state() === 'connecting'"
+      (click)="connect()"
+    >
+      Connect
+    </button>
+    <button
+      type="button"
+      class="rounded bg-zinc-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-600 disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="state() !== 'open' && state() !== 'connecting'"
+      (click)="disconnect()"
+    >
+      Disconnect
+    </button>
+
+    <div class="ml-auto grid grid-cols-3 gap-x-6 gap-y-1 text-sm">
+      <div class="text-zinc-400">FPS</div>
+      <div class="text-zinc-400">Throughput</div>
+      <div class="text-zinc-400">Frames</div>
+      <div class="font-mono">{{ stats().framesPerSecond }}</div>
+      <div class="font-mono">
+        {{ (stats().bytesPerSecond / 1024).toFixed(1) }} KiB/s
+      </div>
+      <div class="font-mono">{{ stats().totalFrames }}</div>
+    </div>
+  </div>
+
+  @if (lastError()) {
+    <div class="rounded border border-red-700 bg-red-950/40 px-3 py-2 text-sm text-red-200">
+      {{ lastError() }}
+    </div>
+  }
+
+  <div class="flex-1 overflow-hidden rounded-lg border border-zinc-800 bg-black">
+    <canvas #canvas class="h-full w-full"></canvas>
+  </div>
+</section>
