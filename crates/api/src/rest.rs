@@ -141,8 +141,9 @@ async fn set_color(
 ) -> Result<Json<StatusResponse>, (StatusCode, String)> {
     let color = match body {
         ColorRequest::Rgb { r, g, b } => Rgb(r, g, b),
-        ColorRequest::Hex { hex } => parse_hex(&hex)
-            .ok_or((StatusCode::BAD_REQUEST, format!("invalid hex color: {hex}")))?,
+        ColorRequest::Hex { hex } => {
+            parse_hex(&hex).ok_or((StatusCode::BAD_REQUEST, format!("invalid hex color: {hex}")))?
+        }
     };
     with_show(&state, |s| s.set_color(color));
     Ok(get_status(State(state)).await)

@@ -73,4 +73,3 @@ impl<R: Renderer> Engine<R> {
         }
     }
 }
-
