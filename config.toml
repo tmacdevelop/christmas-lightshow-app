@@ -15,3 +15,6 @@ effect = "chase"
 
 # Directory holding saved sequence JSON files (Phase 3 sequencer).
 shows_dir = "shows"
+
+# Directory holding saved layout JSON files (Phase 3 layout designer).
+layouts_dir = "layouts"

@@ -9,12 +9,13 @@
 //! - `*    /api/*` — REST control plane (see [`rest`] module).
 
 mod config;
+mod layout_store;
 mod rest;
 mod state;
 mod store;
 mod ws;
 
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 use axum::{Router, routing::get};
 use controller::{Rgb, VirtualRenderer};
@@ -22,7 +23,10 @@ use sequencer::{Engine, ShowState};
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::EnvFilter;
 
-use crate::{config::Config, state::AppState, store::SequenceStore, ws::ws_handler};
+use crate::{
+    config::Config, layout_store::LayoutStore, state::AppState, store::SequenceStore,
+    ws::ws_handler,
+};
 
 const CONFIG_PATH_ENV: &str = "LIGHTSHOW_CONFIG";
 const DEFAULT_CONFIG_PATH: &str = "config.toml";
@@ -56,10 +60,15 @@ async fn main() -> anyhow::Result<()> {
     let store = Arc::new(SequenceStore::open(&config.shows_dir)?);
     tracing::info!(path = %config.shows_dir.display(), count = store.list().len(), "sequence store opened");
 
+    let layouts = Arc::new(LayoutStore::open(&config.layouts_dir)?);
+    tracing::info!(path = %config.layouts_dir.display(), count = layouts.list().len(), "layout store opened");
+
     let state = AppState {
         renderer: Arc::clone(&virtual_renderer),
         show: Arc::clone(&show),
         store: Arc::clone(&store),
+        layouts: Arc::clone(&layouts),
+        active_layout: Arc::new(Mutex::new(None)),
     };
 
     let engine_renderer = SharedRenderer(Arc::clone(&virtual_renderer));

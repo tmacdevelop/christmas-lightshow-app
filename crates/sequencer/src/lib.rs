@@ -9,10 +9,12 @@
 pub mod color;
 pub mod effects;
 mod engine;
+mod layout;
 mod sequence;
 mod show;
 
 pub use engine::Engine;
+pub use layout::{Geometry, Layout, LayoutError, Point, Prop};
 pub use sequence::{Clip, ClipColor, Sequence, SequenceError};
 pub use show::{EffectKind, PlaybackInfo, PlaybackMode, SharedShow, ShowState};
 

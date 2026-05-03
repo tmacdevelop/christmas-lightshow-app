@@ -13,8 +13,11 @@ import {
 import { FormsModule } from '@angular/forms';
 
 import { FrameSocketService } from './frame-socket.service';
+import { Layout, LayoutService } from './layout.service';
+import { ShowControlService } from './show-control.service';
 
 const DEFAULT_WS_URL = '/ws';
+const STATUS_POLL_MS = 1000;
 
 @Component({
   selector: 'app-simulator',
@@ -26,6 +29,8 @@ const DEFAULT_WS_URL = '/ws';
 })
 export class SimulatorComponent implements AfterViewInit, OnDestroy {
   private readonly socket = inject(FrameSocketService);
+  private readonly control = inject(ShowControlService);
+  private readonly layouts = inject(LayoutService);
 
   protected readonly canvasRef = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
 
@@ -33,6 +38,11 @@ export class SimulatorComponent implements AfterViewInit, OnDestroy {
   protected readonly state = this.socket.state;
   protected readonly stats = this.socket.stats;
   protected readonly lastError = this.socket.lastError;
+
+  /** Active layout the simulator is rendering against, or null = legacy strip. */
+  private readonly activeLayout = signal<Layout | null>(null);
+  /** Id we last fetched, so we don't refetch on every status poll. */
+  private lastFetchedActiveId: string | null = null;
 
   protected readonly statusLabel = computed(() => {
     switch (this.state()) {
@@ -64,6 +74,7 @@ export class SimulatorComponent implements AfterViewInit, OnDestroy {
 
   private latestFrame: Uint8Array | null = null;
   private rafHandle: number | null = null;
+  private statusPollHandle: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
     this.socket.onFrame((frame) => {
@@ -75,16 +86,43 @@ export class SimulatorComponent implements AfterViewInit, OnDestroy {
       // Trigger redraws when state changes (e.g. paint a "disconnected" hint).
       this.state();
     });
+
+    // Track the active layout id from server status and lazily fetch the
+    // layout details whenever it changes.
+    effect(() => {
+      const id = this.control.status()?.active_layout_id ?? null;
+      if (id !== this.lastFetchedActiveId) {
+        this.lastFetchedActiveId = id;
+        if (id) {
+          this.layouts
+            .get(id)
+            .then((l) => this.activeLayout.set(l))
+            .catch(() => this.activeLayout.set(null));
+        } else {
+          this.activeLayout.set(null);
+        }
+      }
+    });
   }
 
   ngAfterViewInit(): void {
     this.connect();
     this.startRenderLoop();
+    // Initial status fetch + lightweight poll so the simulator follows
+    // activate/deactivate without needing a websocket message.
+    void this.control.loadStatus();
+    this.statusPollHandle = setInterval(
+      () => this.control.loadStatus(),
+      STATUS_POLL_MS,
+    );
   }
 
   ngOnDestroy(): void {
     if (this.rafHandle !== null) {
       cancelAnimationFrame(this.rafHandle);
+    }
+    if (this.statusPollHandle) {
+      clearInterval(this.statusPollHandle);
     }
     this.socket.disconnect();
   }
@@ -141,12 +179,24 @@ export class SimulatorComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    const pixelCount = Math.floor(frame.length / 3);
-    if (pixelCount === 0) {
-      return;
+    const layout = this.activeLayout();
+    if (layout && layout.props.length > 0) {
+      this.drawLayout(ctx, cssWidth, cssHeight, frame, layout);
+    } else {
+      this.drawFlatStrip(ctx, cssWidth, cssHeight, frame);
     }
+  }
 
-    // Lay pixels out as a horizontal strip with a glowing dot per pixel.
+  /** Legacy renderer: a single horizontal row of dots. */
+  private drawFlatStrip(
+    ctx: CanvasRenderingContext2D,
+    cssWidth: number,
+    cssHeight: number,
+    frame: Uint8Array,
+  ): void {
+    const pixelCount = Math.floor(frame.length / 3);
+    if (pixelCount === 0) return;
+
     const padding = 32;
     const usableWidth = Math.max(1, cssWidth - padding * 2);
     const spacing = usableWidth / pixelCount;
@@ -154,25 +204,89 @@ export class SimulatorComponent implements AfterViewInit, OnDestroy {
     const cy = cssHeight / 2;
 
     for (let i = 0; i < pixelCount; i += 1) {
-      const r = frame[i * 3];
-      const g = frame[i * 3 + 1];
-      const b = frame[i * 3 + 2];
       const cx = padding + spacing * (i + 0.5);
-
-      // Soft outer glow.
-      const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, dotRadius * 3);
-      glow.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.55)`);
-      glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = glow;
-      ctx.beginPath();
-      ctx.arc(cx, cy, dotRadius * 3, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Bright core.
-      ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-      ctx.beginPath();
-      ctx.arc(cx, cy, dotRadius, 0, Math.PI * 2);
-      ctx.fill();
+      this.drawDot(ctx, cx, cy, dotRadius, frame, i);
     }
+  }
+
+  /** Layout-aware renderer: each prop's pixels are placed along its strip. */
+  private drawLayout(
+    ctx: CanvasRenderingContext2D,
+    cssWidth: number,
+    cssHeight: number,
+    frame: Uint8Array,
+  layout: Layout,
+  ): void {
+    const padding = 24;
+    const usableW = Math.max(1, cssWidth - padding * 2);
+    const usableH = Math.max(1, cssHeight - padding * 2);
+    // Letterbox the layout into the canvas, preserving aspect ratio.
+    const scale = Math.min(usableW / layout.width, usableH / layout.height);
+    const drawW = layout.width * scale;
+    const drawH = layout.height * scale;
+    const offX = (cssWidth - drawW) / 2;
+    const offY = (cssHeight - drawH) / 2;
+
+    // Faint canvas border so the user sees the room bounds.
+    ctx.strokeStyle = '#27272a';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(offX, offY, drawW, drawH);
+
+    const totalPixels = Math.floor(frame.length / 3);
+
+    for (const prop of layout.props) {
+      if (prop.geometry.type !== 'strip') continue;
+      const start = prop.geometry.start;
+      const end = prop.geometry.end;
+
+      const segLen = Math.hypot(end.x - start.x, end.y - start.y) * scale;
+      // Clamp dot radius so even short props get visible dots, but not so big
+      // they overlap heavily on long ones.
+      const spacing = prop.pixel_count > 0 ? segLen / prop.pixel_count : 0;
+      const dotRadius = Math.max(2.5, Math.min(spacing * 0.45, 12));
+
+      for (let i = 0; i < prop.pixel_count; i += 1) {
+        // Wrap pixel offsets that exceed the engine's frame buffer so layouts
+        // with many strips still render even when the global pixel_count is
+        // smaller than the layout's total pixel demand.
+        const idx = (prop.pixel_offset + i) % totalPixels;
+        // Center each pixel inside its 1/N segment so endpoints aren't doubled.
+        const t =
+          prop.pixel_count === 1 ? 0.5 : (i + 0.5) / prop.pixel_count;
+        const lx = start.x + (end.x - start.x) * t;
+        const ly = start.y + (end.y - start.y) * t;
+        const cx = offX + lx * scale;
+        const cy = offY + ly * scale;
+        this.drawDot(ctx, cx, cy, dotRadius, frame, idx);
+      }
+    }
+  }
+
+  private drawDot(
+    ctx: CanvasRenderingContext2D,
+    cx: number,
+    cy: number,
+    dotRadius: number,
+    frame: Uint8Array,
+    pixelIndex: number,
+  ): void {
+    const r = frame[pixelIndex * 3];
+    const g = frame[pixelIndex * 3 + 1];
+    const b = frame[pixelIndex * 3 + 2];
+
+    // Soft outer glow.
+    const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, dotRadius * 3);
+    glow.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.55)`);
+    glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(cx, cy, dotRadius * 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Bright core.
+    ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy, dotRadius, 0, Math.PI * 2);
+    ctx.fill();
   }
 }
