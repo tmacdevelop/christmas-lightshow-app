@@ -22,6 +22,16 @@
 //! - `POST   /api/sequences/:id/play` — start playing a sequence;
 //!   body `{"loop": bool}` (default `false`).
 //! - `POST   /api/playback/stop`     — stop sequence playback (returns to live).
+//!
+//! Layout designer (Phase 3):
+//!
+//! - `GET    /api/layouts`              — list saved layouts.
+//! - `GET    /api/layouts/:id`          — fetch a layout by id.
+//! - `PUT    /api/layouts/:id`          — create/replace a layout.
+//! - `DELETE /api/layouts/:id`          — remove a layout.
+//! - `POST   /api/layouts/:id/activate` — mark a layout as the one the
+//!   simulator should render against.
+//! - `POST   /api/layouts/deactivate`   — clear the active layout.
 
 use axum::{
     Json, Router,
@@ -30,7 +40,7 @@ use axum::{
     routing::{get, post},
 };
 use controller::Rgb;
-use sequencer::{EffectKind, PlaybackInfo, Sequence};
+use sequencer::{EffectKind, Layout, PlaybackInfo, Sequence};
 use serde::{Deserialize, Serialize};
 
 use crate::state::AppState;
@@ -51,6 +61,13 @@ pub fn router() -> Router<AppState> {
         )
         .route("/sequences/{id}/play", post(play_sequence))
         .route("/playback/stop", post(stop_playback))
+        .route("/layouts", get(list_layouts))
+        .route(
+            "/layouts/{id}",
+            get(get_layout).put(put_layout).delete(delete_layout),
+        )
+        .route("/layouts/{id}/activate", post(activate_layout))
+        .route("/layouts/deactivate", post(deactivate_layout))
 }
 
 #[derive(Serialize)]
@@ -72,6 +89,7 @@ struct StatusResponse {
     color: ColorPayload,
     effect: &'static str,
     playback: PlaybackInfo,
+    active_layout_id: Option<String>,
 }
 
 #[derive(Serialize)]
@@ -141,6 +159,7 @@ async fn get_status(State(state): State<AppState>) -> Json<StatusResponse> {
         color: color.into(),
         effect: kind.name(),
         playback,
+        active_layout_id: active_layout_id(&state),
     })
 }
 
@@ -289,5 +308,90 @@ async fn play_sequence(
 
 async fn stop_playback(State(state): State<AppState>) -> Json<StatusResponse> {
     with_show(&state, |s| s.stop_sequence());
+    get_status(State(state)).await
+}
+
+// ---------- Phase 3: layouts ----------
+
+fn active_layout_id(state: &AppState) -> Option<String> {
+    match state.active_layout.lock() {
+        Ok(g) => g.clone(),
+        Err(p) => p.into_inner().clone(),
+    }
+}
+
+fn set_active_layout_id(state: &AppState, id: Option<String>) {
+    let mut g = match state.active_layout.lock() {
+        Ok(g) => g,
+        Err(p) => p.into_inner(),
+    };
+    *g = id;
+}
+
+async fn list_layouts(State(state): State<AppState>) -> Json<Vec<Layout>> {
+    Json(state.layouts.list())
+}
+
+async fn get_layout(
+    State(state): State<AppState>,
+    Path(id): Path<String>,
+) -> Result<Json<Layout>, (StatusCode, String)> {
+    state
+        .layouts
+        .get(&id)
+        .map(Json)
+        .ok_or((StatusCode::NOT_FOUND, format!("no layout with id '{id}'")))
+}
+
+async fn put_layout(
+    State(state): State<AppState>,
+    Path(id): Path<String>,
+    Json(layout): Json<Layout>,
+) -> Result<Json<Layout>, (StatusCode, String)> {
+    if layout.id != id {
+        return Err((
+            StatusCode::BAD_REQUEST,
+            format!("path id '{id}' does not match body id '{}'", layout.id),
+        ));
+    }
+    state
+        .layouts
+        .save(layout)
+        .map(Json)
+        .map_err(|e| (StatusCode::BAD_REQUEST, e.to_string()))
+}
+
+async fn delete_layout(
+    State(state): State<AppState>,
+    Path(id): Path<String>,
+) -> Result<StatusCode, (StatusCode, String)> {
+    match state.layouts.delete(&id) {
+        Ok(_) => {
+            // Clear the active selection if it was pointing at this layout.
+            if active_layout_id(&state).as_deref() == Some(&id) {
+                set_active_layout_id(&state, None);
+            }
+            Ok(StatusCode::NO_CONTENT)
+        }
+        Err(crate::layout_store::LayoutStoreError::NotFound(_)) => {
+            Err((StatusCode::NOT_FOUND, format!("no layout with id '{id}'")))
+        }
+        Err(e) => Err((StatusCode::BAD_REQUEST, e.to_string())),
+    }
+}
+
+async fn activate_layout(
+    State(state): State<AppState>,
+    Path(id): Path<String>,
+) -> Result<Json<StatusResponse>, (StatusCode, String)> {
+    if state.layouts.get(&id).is_none() {
+        return Err((StatusCode::NOT_FOUND, format!("no layout with id '{id}'")));
+    }
+    set_active_layout_id(&state, Some(id));
+    Ok(get_status(State(state)).await)
+}
+
+async fn deactivate_layout(State(state): State<AppState>) -> Json<StatusResponse> {
+    set_active_layout_id(&state, None);
     get_status(State(state)).await
 }

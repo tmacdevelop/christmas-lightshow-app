@@ -33,6 +33,7 @@ export interface ShowStatus {
   color: ColorPayload;
   effect: EffectKind;
   playback: PlaybackInfo;
+  active_layout_id: string | null;
 }
 
 export interface EffectsResponse {

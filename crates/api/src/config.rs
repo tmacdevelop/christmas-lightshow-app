@@ -18,10 +18,17 @@ pub struct Config {
     /// Directory holding sequence JSON files. Defaults to `./shows`.
     #[serde(default = "default_shows_dir")]
     pub shows_dir: PathBuf,
+    /// Directory holding layout JSON files. Defaults to `./layouts`.
+    #[serde(default = "default_layouts_dir")]
+    pub layouts_dir: PathBuf,
 }
 
 fn default_shows_dir() -> PathBuf {
     PathBuf::from("shows")
+}
+
+fn default_layouts_dir() -> PathBuf {
+    PathBuf::from("layouts")
 }
 
 impl Config {
