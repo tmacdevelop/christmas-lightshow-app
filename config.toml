@@ -9,3 +9,6 @@ fps = 60
 
 # Address the HTTP/WebSocket server binds to.
 bind = "127.0.0.1:3000"
+
+# Built-in effect played at startup. One of: "solid", "fade", "chase", "rainbow".
+effect = "chase"

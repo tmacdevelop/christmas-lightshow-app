@@ -2,7 +2,8 @@
 //!
 //! Phase 1 ships:
 //! - [`Effect`] trait + [`EffectContext`] passed to each tick.
-//! - [`effects::Rainbow`] — a hue-cycling rainbow sweep.
+//! - [`effects::Solid`], [`effects::Fade`], [`effects::Chase`], and
+//!   [`effects::Rainbow`].
 //! - [`Engine`] — drives an effect at a fixed FPS into a [`Renderer`].
 
 pub mod color;

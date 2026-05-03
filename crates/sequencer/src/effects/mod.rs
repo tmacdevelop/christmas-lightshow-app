@@ -1,8 +1,13 @@
 //! Built-in effects.
 //!
-//! Phase 1 includes only [`Rainbow`]; additional effects (solid, fade, chase)
-//! are planned for Phase 2.
+//! Phase 1 ships four effects: [`Solid`], [`Fade`], [`Chase`], and [`Rainbow`].
 
+mod chase;
+mod fade;
 mod rainbow;
+mod solid;
 
+pub use chase::Chase;
+pub use fade::Fade;
 pub use rainbow::Rainbow;
+pub use solid::Solid;

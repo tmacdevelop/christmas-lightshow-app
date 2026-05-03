@@ -92,6 +92,7 @@ Runtime configuration lives in [config.toml](config.toml) at the repo root:
 | `pixel_count` | Number of virtual pixels in the strip |
 | `fps` | Target frame rate of the show engine |
 | `bind` | Address the HTTP/WebSocket server binds to |
+| `effect` | Built-in effect to play: `solid`, `fade`, `chase`, or `rainbow` |
 
 Override the config path with the `LIGHTSHOW_CONFIG` environment variable.
 
