@@ -20,4 +20,23 @@ unsafe_code = "warn"
 all = { level = "warn", priority = -1 }
 
 [workspace.dependencies]
-# Real shared dependencies land in Phase 1.
+# Async runtime & web
+tokio = { version = "1", features = ["full"] }
+axum = { version = "0.8", features = ["ws", "macros"] }
+tower-http = { version = "0.6", features = ["trace"] }
+futures-util = "0.3"
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.9"
+
+# Logging & errors
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+anyhow = "1"
+thiserror = "2"
+
+# Workspace-internal crates
+controller = { path = "crates/controller" }
+sequencer = { path = "crates/sequencer" }

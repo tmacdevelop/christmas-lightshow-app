@@ -10,3 +10,6 @@ repository.workspace = true
 workspace = true
 
 [dependencies]
+controller = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }

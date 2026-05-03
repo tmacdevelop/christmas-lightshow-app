@@ -1,0 +1,11 @@
+# Default runtime configuration for `lightshow-api`.
+# Override the path with the `LIGHTSHOW_CONFIG` environment variable.
+
+# Number of virtual pixels in the strip.
+pixel_count = 60
+
+# Target frame rate for the show engine.
+fps = 60
+
+# Address the HTTP/WebSocket server binds to.
+bind = "127.0.0.1:3000"
