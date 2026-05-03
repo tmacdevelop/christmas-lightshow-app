@@ -127,6 +127,19 @@ Format the Rust workspace:
 cargo fmt --all
 ```
 
+### Pre-commit hook
+
+A `.githooks/pre-commit` hook runs the same Rust + Angular checks CI runs, but
+only for the toolchain whose files are staged. Enable it once per clone:
+
+```bash
+./.githooks/install.sh
+# or, equivalently:
+git config core.hooksPath .githooks
+```
+
+Bypass for a single commit with `git commit --no-verify`.
+
 ---
 
 ## Roadmap

@@ -1,6 +1,7 @@
 * text=auto eol=lf
 *.bat text eol=crlf
 *.sh  text eol=lf
+.githooks/pre-commit text eol=lf
 *.png binary
 *.jpg binary
 *.jpeg binary

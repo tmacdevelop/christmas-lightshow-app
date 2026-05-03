@@ -4,6 +4,8 @@ import { firstValueFrom } from 'rxjs';
 
 export type EffectKind = 'solid' | 'fade' | 'chase' | 'rainbow';
 
+export type PlaybackMode = 'live' | 'sequence';
+
 export interface EffectInfo {
   kind: EffectKind;
   uses_color: boolean;
@@ -16,11 +18,21 @@ export interface ColorPayload {
   hex: string;
 }
 
+export interface PlaybackInfo {
+  mode: PlaybackMode;
+  sequence_id: string | null;
+  sequence_name: string | null;
+  position_ms: number;
+  duration_ms: number;
+  looping: boolean;
+}
+
 export interface ShowStatus {
   playing: boolean;
   brightness: number;
   color: ColorPayload;
   effect: EffectKind;
+  playback: PlaybackInfo;
 }
 
 export interface EffectsResponse {
