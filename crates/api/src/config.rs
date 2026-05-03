@@ -1,6 +1,6 @@
 //! Runtime configuration loaded from `config.toml`.
 
-use std::{net::SocketAddr, path::Path};
+use std::{net::SocketAddr, path::{Path, PathBuf}};
 
 use sequencer::EffectKind;
 use serde::Deserialize;
@@ -12,6 +12,13 @@ pub struct Config {
     pub bind: SocketAddr,
     #[serde(default)]
     pub effect: EffectKind,
+    /// Directory holding sequence JSON files. Defaults to `./shows`.
+    #[serde(default = "default_shows_dir")]
+    pub shows_dir: PathBuf,
+}
+
+fn default_shows_dir() -> PathBuf {
+    PathBuf::from("shows")
 }
 
 impl Config {

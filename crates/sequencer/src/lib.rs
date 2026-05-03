@@ -9,10 +9,12 @@
 pub mod color;
 pub mod effects;
 mod engine;
+mod sequence;
 mod show;
 
 pub use engine::Engine;
-pub use show::{EffectKind, SharedShow, ShowState};
+pub use sequence::{Clip, ClipColor, Sequence, SequenceError};
+pub use show::{EffectKind, PlaybackInfo, PlaybackMode, SharedShow, ShowState};
 
 use controller::Rgb;
 

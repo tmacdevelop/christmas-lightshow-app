@@ -11,6 +11,7 @@
 mod config;
 mod rest;
 mod state;
+mod store;
 mod ws;
 
 use std::sync::Arc;
@@ -21,7 +22,7 @@ use sequencer::{Engine, ShowState};
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::EnvFilter;
 
-use crate::{config::Config, state::AppState, ws::ws_handler};
+use crate::{config::Config, state::AppState, store::SequenceStore, ws::ws_handler};
 
 const CONFIG_PATH_ENV: &str = "LIGHTSHOW_CONFIG";
 const DEFAULT_CONFIG_PATH: &str = "config.toml";
@@ -52,9 +53,13 @@ async fn main() -> anyhow::Result<()> {
 
     let show = ShowState::new(config.effect, DEFAULT_COLOR).shared();
 
+    let store = Arc::new(SequenceStore::open(&config.shows_dir)?);
+    tracing::info!(path = %config.shows_dir.display(), count = store.list().len(), "sequence store opened");
+
     let state = AppState {
         renderer: Arc::clone(&virtual_renderer),
         show: Arc::clone(&show),
+        store: Arc::clone(&store),
     };
 
     let engine_renderer = SharedRenderer(Arc::clone(&virtual_renderer));

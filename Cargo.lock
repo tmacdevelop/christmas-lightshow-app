@@ -28,6 +28,7 @@ dependencies = [
  "sequencer",
  "serde",
  "serde_json",
+ "thiserror",
  "tokio",
  "toml",
  "tower-http",
@@ -607,6 +608,8 @@ version = "0.1.0"
 dependencies = [
  "controller",
  "serde",
+ "serde_json",
+ "thiserror",
  "tokio",
  "tracing",
 ]

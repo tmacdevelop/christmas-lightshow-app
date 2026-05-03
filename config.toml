@@ -12,3 +12,6 @@ bind = "127.0.0.1:3000"
 
 # Built-in effect played at startup. One of: "solid", "fade", "chase", "rainbow".
 effect = "chase"
+
+# Directory holding saved sequence JSON files (Phase 3 sequencer).
+shows_dir = "shows"
