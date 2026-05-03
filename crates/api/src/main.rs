@@ -1,36 +1,34 @@
-//! `lightshow-api` — Phase 1 axum server.
+//! `lightshow-api` — Phase 2 axum server.
 //!
-//! Loads `config.toml`, starts the show engine producing rainbow frames at the
+//! Loads `config.toml`, starts the show engine producing frames at the
 //! configured FPS, and exposes:
 //!
-//! - `GET /healthz` — liveness probe.
-//! - `GET /ws` — WebSocket stream of pixel frames (binary by default,
-//!   `?format=json` for debug).
+//! - `GET  /healthz` — liveness probe.
+//! - `GET  /ws`      — WebSocket stream of pixel frames (binary by default,
+//!                     `?format=json` for debug).
+//! - `*    /api/*`   — REST control plane (see [`rest`] module).
 
 mod config;
+mod rest;
 mod state;
 mod ws;
 
 use std::sync::Arc;
 
 use axum::{Router, routing::get};
-use controller::VirtualRenderer;
-use sequencer::{
-    Effect, Engine,
-    effects::{Chase, Fade, Rainbow, Solid},
-};
+use controller::{Rgb, VirtualRenderer};
+use sequencer::{Engine, ShowState};
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::EnvFilter;
 
-use crate::{
-    config::{Config, EffectChoice},
-    state::AppState,
-    ws::ws_handler,
-};
+use crate::{config::Config, state::AppState, ws::ws_handler};
 
 const CONFIG_PATH_ENV: &str = "LIGHTSHOW_CONFIG";
 const DEFAULT_CONFIG_PATH: &str = "config.toml";
 const FRAME_CHANNEL_CAPACITY: usize = 8;
+
+/// Default color the show starts with (warm Christmas red).
+const DEFAULT_COLOR: Rgb = Rgb(255, 0, 0);
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -44,31 +42,30 @@ async fn main() -> anyhow::Result<()> {
     let config = Config::load(&config_path)?;
     tracing::info!(?config, path = %config_path, "config loaded");
 
-    // Renderer is shared with WS handlers (subscribers) and owned by the engine
-    // (publisher). We construct one and split: a clone-of-Arc for handlers,
-    // and an owned VirtualRenderer for the engine. The trick is that publishing
-    // is done through `tokio::sync::broadcast::Sender::send`, which only needs
-    // `&self`, so we keep a single instance behind an Arc and use it for both.
+    // Renderer is shared with WS handlers (subscribers) and the engine
+    // (publisher). VirtualRenderer's `publish` only needs `&self`, so we
+    // wrap a single instance in an Arc and use it for both roles.
     let virtual_renderer = Arc::new(VirtualRenderer::new(
         config.pixel_count,
         FRAME_CHANNEL_CAPACITY,
     ));
 
+    let show = ShowState::new(config.effect, DEFAULT_COLOR).shared();
+
     let state = AppState {
         renderer: Arc::clone(&virtual_renderer),
+        show: Arc::clone(&show),
     };
 
-    // The Engine takes ownership of a Renderer. We give it an EngineRenderer
-    // wrapper that delegates to the shared Arc<VirtualRenderer>.
     let engine_renderer = SharedRenderer(Arc::clone(&virtual_renderer));
-    let effect = build_effect(config.effect);
-    tracing::info!(effect = effect.name(), "starting engine");
-    let engine = Engine::new(engine_renderer, effect, config.fps);
+    tracing::info!(effect = config.effect.name(), "starting engine");
+    let engine = Engine::new(engine_renderer, Arc::clone(&show), config.fps);
     tokio::spawn(engine.run());
 
     let app = Router::new()
         .route("/healthz", get(healthz))
         .route("/ws", get(ws_handler))
+        .nest("/api", rest::router())
         .with_state(state)
         .layer(TraceLayer::new_for_http());
 
@@ -83,21 +80,11 @@ async fn healthz() -> &'static str {
     "ok"
 }
 
-fn build_effect(choice: EffectChoice) -> Box<dyn Effect> {
-    match choice {
-        EffectChoice::Solid => Box::new(Solid::default()),
-        EffectChoice::Fade => Box::new(Fade::default()),
-        EffectChoice::Chase => Box::new(Chase::default()),
-        EffectChoice::Rainbow => Box::new(Rainbow::default()),
-    }
-}
-
 /// Adapter that lets the engine drive the shared `Arc<VirtualRenderer>`.
 ///
-/// `VirtualRenderer::render` requires `&mut self` per the `Renderer` trait,
-/// but the broadcast publish is internally `&self`-callable. We re-borrow and
-/// forward via `Arc::get_mut` is unsafe here; instead we duplicate the
-/// minimal logic by subscribing/publishing through the shared instance.
+/// `Renderer::render` takes `&mut self`, but broadcasting on a
+/// `tokio::sync::broadcast::Sender` only needs `&self`. We forward through
+/// `VirtualRenderer::publish` so the renderer can be safely shared.
 struct SharedRenderer(Arc<VirtualRenderer>);
 
 impl controller::Renderer for SharedRenderer {
@@ -106,8 +93,6 @@ impl controller::Renderer for SharedRenderer {
     }
 
     fn render(&mut self, frame: &[controller::Rgb]) -> Result<(), controller::RenderError> {
-        // Safe because broadcasting only needs &self semantics; we expose a
-        // wrapper method on VirtualRenderer.
         self.0.publish(frame)
     }
 }

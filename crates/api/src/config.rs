@@ -2,6 +2,7 @@
 
 use std::{net::SocketAddr, path::Path};
 
+use sequencer::EffectKind;
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
@@ -10,18 +11,7 @@ pub struct Config {
     pub fps: u32,
     pub bind: SocketAddr,
     #[serde(default)]
-    pub effect: EffectChoice,
-}
-
-/// Which built-in effect to play on startup.
-#[derive(Debug, Default, Deserialize, Clone, Copy, PartialEq, Eq)]
-#[serde(rename_all = "lowercase")]
-pub enum EffectChoice {
-    Solid,
-    Fade,
-    Chase,
-    #[default]
-    Rainbow,
+    pub effect: EffectKind,
 }
 
 impl Config {

@@ -13,3 +13,4 @@ workspace = true
 controller = { workspace = true }
 tokio = { workspace = true }
 tracing = { workspace = true }
+serde = { workspace = true }

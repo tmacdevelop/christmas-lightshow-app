@@ -1,0 +1,102 @@
+<section class="flex flex-col gap-4 rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+  <header class="flex items-center gap-3">
+    <h2 class="text-lg font-semibold tracking-tight">Live Control</h2>
+    @if (status(); as s) {
+      <span
+        class="ml-auto inline-flex items-center gap-2 rounded-full bg-zinc-950 px-3 py-1 text-xs"
+      >
+        <span
+          class="h-2 w-2 rounded-full"
+          [class.bg-emerald-500]="s.playing"
+          [class.bg-zinc-600]="!s.playing"
+        ></span>
+        {{ s.playing ? 'Playing' : 'Stopped' }}
+      </span>
+    }
+  </header>
+
+  @if (lastError()) {
+    <div
+      class="rounded border border-red-700 bg-red-950/40 px-3 py-2 text-sm text-red-200"
+    >
+      {{ lastError() }}
+    </div>
+  }
+
+  <div class="flex flex-wrap gap-2">
+    <button
+      type="button"
+      class="rounded bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="playing()"
+      (click)="start()"
+    >
+      Start
+    </button>
+    <button
+      type="button"
+      class="rounded bg-zinc-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-600 disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="!playing()"
+      (click)="stop()"
+    >
+      Stop
+    </button>
+  </div>
+
+  <div class="flex flex-col gap-2">
+    <span class="text-sm text-zinc-400">Effect</span>
+    <div class="flex flex-wrap gap-2">
+      @for (e of effects(); track e.kind) {
+        <button
+          type="button"
+          class="rounded border px-3 py-1.5 text-sm font-medium capitalize transition-colors"
+          [class.border-emerald-500]="activeEffect() === e.kind"
+          [class.bg-emerald-600/20]="activeEffect() === e.kind"
+          [class.text-emerald-200]="activeEffect() === e.kind"
+          [class.border-zinc-700]="activeEffect() !== e.kind"
+          [class.bg-zinc-950]="activeEffect() !== e.kind"
+          [class.text-zinc-200]="activeEffect() !== e.kind"
+          [class.hover:bg-zinc-800]="activeEffect() !== e.kind"
+          (click)="chooseEffect(e.kind)"
+        >
+          {{ e.kind }}
+          @if (!e.uses_color) {
+            <span class="ml-1 text-xs text-zinc-500">(no color)</span>
+          }
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <label class="flex flex-col gap-1 text-sm">
+      <span class="flex items-center justify-between text-zinc-400">
+        <span>Color</span>
+        <span class="font-mono text-xs">{{ colorDraft() }}</span>
+      </span>
+      <input
+        type="color"
+        class="h-10 w-full cursor-pointer rounded border border-zinc-700 bg-zinc-950"
+        [value]="colorDraft()"
+        (input)="onColorInput(($any($event.target)).value)"
+        (change)="commitColor()"
+      />
+    </label>
+
+    <label class="flex flex-col gap-1 text-sm">
+      <span class="flex items-center justify-between text-zinc-400">
+        <span>Brightness</span>
+        <span class="font-mono text-xs">{{ brightnessPercent() }}%</span>
+      </span>
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        class="h-10 w-full cursor-pointer accent-emerald-500"
+        [value]="brightnessDraft()"
+        (input)="onBrightnessInput(+($any($event.target)).value)"
+        (change)="commitBrightness()"
+      />
+    </label>
+  </div>
+</section>
