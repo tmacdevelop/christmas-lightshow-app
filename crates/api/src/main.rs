@@ -15,11 +15,18 @@ use std::sync::Arc;
 
 use axum::{Router, routing::get};
 use controller::VirtualRenderer;
-use sequencer::{Engine, effects::Rainbow};
+use sequencer::{
+    Effect, Engine,
+    effects::{Chase, Fade, Rainbow, Solid},
+};
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::EnvFilter;
 
-use crate::{config::Config, state::AppState, ws::ws_handler};
+use crate::{
+    config::{Config, EffectChoice},
+    state::AppState,
+    ws::ws_handler,
+};
 
 const CONFIG_PATH_ENV: &str = "LIGHTSHOW_CONFIG";
 const DEFAULT_CONFIG_PATH: &str = "config.toml";
@@ -54,7 +61,9 @@ async fn main() -> anyhow::Result<()> {
     // The Engine takes ownership of a Renderer. We give it an EngineRenderer
     // wrapper that delegates to the shared Arc<VirtualRenderer>.
     let engine_renderer = SharedRenderer(Arc::clone(&virtual_renderer));
-    let engine = Engine::new(engine_renderer, Box::new(Rainbow::default()), config.fps);
+    let effect = build_effect(config.effect);
+    tracing::info!(effect = effect.name(), "starting engine");
+    let engine = Engine::new(engine_renderer, effect, config.fps);
     tokio::spawn(engine.run());
 
     let app = Router::new()
@@ -72,6 +81,15 @@ async fn main() -> anyhow::Result<()> {
 
 async fn healthz() -> &'static str {
     "ok"
+}
+
+fn build_effect(choice: EffectChoice) -> Box<dyn Effect> {
+    match choice {
+        EffectChoice::Solid => Box::new(Solid::default()),
+        EffectChoice::Fade => Box::new(Fade::default()),
+        EffectChoice::Chase => Box::new(Chase::default()),
+        EffectChoice::Rainbow => Box::new(Rainbow::default()),
+    }
 }
 
 /// Adapter that lets the engine drive the shared `Arc<VirtualRenderer>`.
