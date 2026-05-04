@@ -146,9 +146,16 @@ Total: **~$80–$150** for a starter indoor show.
 ### Phase 3 — Sequencer & Timeline Editor (Weeks 5–7)
 - Timeline component, drag-and-drop effects per light group
 - Layout designer (place virtual props on a "room map")
+- **Stacked-strip "virtual matrix" groups:** group N parallel strips of equal
+  length into a 2D grid prop and run matrix-style animations across them
+  (per-row chases, vertical/horizontal wipes, scrolling text, plasma, 2D
+  noise). The group exposes an (x, y) → pixel-index mapping (with optional
+  serpentine/zig-zag wiring) so the same effect engine can address it as a
+  W×H matrix; the renderer still emits a flat `Vec<Rgb>` per strip
 - Save/load sequences + layouts as JSON in SQLite
 - Frame-accurate playback engine (~40 FPS)
-- ✅ **Deliverable:** Reusable, saveable shows previewed in the simulator
+- ✅ **Deliverable:** Reusable, saveable shows previewed in the simulator,
+  including 2D effects driven across stacked strips
 
 ### Phase 4 — Music Synchronization (Weeks 8–10)
 - Audio decode (`symphonia`), real-time FFT (`rustfft`), beat detection
@@ -186,7 +193,7 @@ Total: **~$80–$150** for a starter indoor show.
 
 - **Phase 1:** 2D canvas, each pixel = glowing dot, real-time effect playback
 - **Phase 2:** Drag-and-drop layout designer (strips as lines/curves, strings as paths, matrices as rectangles), snap-to-grid, save layouts as JSON
-- **Phase 3:** Realistic glow with HTML5 Canvas radial gradients, dim-room background, configurable pixel size/spacing
+- **Phase 3:** Realistic glow with HTML5 Canvas radial gradients, dim-room background, configurable pixel size/spacing; stacked-strip groups render as a contiguous 2D grid so matrix effects can be previewed pixel-accurately
 - **Phase 4:** Audio waveform + beat markers, scrubbable timeline, MP4 export
 - **Phase 5 (stretch):** 3D yard view via Three.js for outdoor planning
 
@@ -270,4 +277,4 @@ christmas-lightshow-app/
 
 ---
 
-*Last updated: 2026-05-03*
+*Last updated: 2026-05-04*
