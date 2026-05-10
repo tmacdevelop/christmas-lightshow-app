@@ -1,15 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-
-import { LxPanel } from '../ui/panel/lx-panel';
-import { LxSplitter } from '../ui/splitter/lx-splitter';
-import { LxTab, LxTabs } from '../ui/tabs/lx-tabs';
-
 import { AppBarComponent } from './app-bar';
 import { AudioPanelComponent } from '../audio-panel';
 import { ControlPanelComponent } from '../control-panel';
 import { LayoutDesignerComponent } from '../layout-designer';
 import { SimulatorComponent } from '../simulator';
 import { TimelineComponent } from '../timeline';
+import { LxPanel } from '../ui-components/panel/lx-panel';
+import { LxSplitter } from '../ui-components/splitter/lx-splitter';
+import { LxTab, LxTabs } from '../ui-components/tabs/lx-tabs';
 
 /**
  * Single-screen workspace shell (Option A).

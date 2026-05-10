@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 
 import { AudioService, AudioTrack } from './audio.service';
-import { LxButton } from './ui/button/lx-button';
+import { LxButton } from './ui-components/button/lx-button';
 
 @Component({
   selector: 'app-audio-panel',
