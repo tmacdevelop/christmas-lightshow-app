@@ -1,7 +1,8 @@
-<section class="rounded-lg border border-zinc-800 bg-zinc-900/60 p-4">
-  <header class="mb-3 flex flex-wrap items-center gap-3">
-    <h2 class="text-lg font-semibold">Layout designer</h2>
-
+<div class="designer">
+  <!-- Toolbar -->
+  <header
+    class="toolbar flex flex-wrap items-center gap-2 rounded-md border border-zinc-800 bg-zinc-900/60 px-3 py-2"
+  >
     <select
       class="rounded border border-zinc-700 bg-zinc-800 px-2 py-1 text-sm"
       [value]="editing()?.id ?? ''"
@@ -9,7 +10,9 @@
     >
       <option value="">— Library —</option>
       @for (l of layouts.layouts(); track l.id) {
-        <option [value]="l.id">{{ l.name }}{{ activeLayoutId() === l.id ? ' ★' : '' }}</option>
+        <option [value]="l.id">
+          {{ l.name }}{{ activeLayoutId() === l.id ? ' ★' : '' }}
+        </option>
       }
     </select>
 
@@ -45,44 +48,74 @@
       >
         Delete
       </button>
-    }
-  </header>
 
-  @if (editing(); as l) {
-    <div class="mb-3 flex flex-wrap items-end gap-3 text-sm">
-      <label class="flex flex-col">
-        <span class="text-xs text-zinc-400">Name</span>
+      <span class="mx-2 h-5 w-px bg-zinc-700"></span>
+
+      <label class="flex items-center gap-1 text-xs text-zinc-400">
+        Name
         <input
-          class="rounded border border-zinc-700 bg-zinc-800 px-2 py-1"
+          class="w-44 rounded border border-zinc-700 bg-zinc-800 px-2 py-0.5 text-sm text-zinc-100"
           [value]="l.name"
           (input)="updateName($any($event.target).value)"
         />
       </label>
-      <label class="flex flex-col">
-        <span class="text-xs text-zinc-400">Width</span>
+      <label class="flex items-center gap-1 text-xs text-zinc-400">
+        W
         <input
           type="number"
-          class="w-24 rounded border border-zinc-700 bg-zinc-800 px-2 py-1"
+          class="w-20 rounded border border-zinc-700 bg-zinc-800 px-2 py-0.5 text-sm text-zinc-100"
           [value]="l.width"
           (change)="updateDimensions(+$any($event.target).value, l.height)"
         />
       </label>
-      <label class="flex flex-col">
-        <span class="text-xs text-zinc-400">Height</span>
+      <label class="flex items-center gap-1 text-xs text-zinc-400">
+        H
         <input
           type="number"
-          class="w-24 rounded border border-zinc-700 bg-zinc-800 px-2 py-1"
+          class="w-20 rounded border border-zinc-700 bg-zinc-800 px-2 py-0.5 text-sm text-zinc-100"
           [value]="l.height"
           (change)="updateDimensions(l.width, +$any($event.target).value)"
         />
       </label>
-      <p class="ml-auto text-xs text-zinc-500">
-        Click empty canvas to add a strip · drag endpoints to reshape · drag the
-        strip body to move · select + Delete to remove
-      </p>
-    </div>
+    }
 
-    <div class="canvas-wrapper">
+    @if (layouts.lastError(); as err) {
+      <span class="ml-auto text-xs text-red-400">{{ err }}</span>
+    }
+  </header>
+
+  @if (editing(); as l) {
+    <!-- Left rail: prop list -->
+    <aside
+      class="props-rail flex flex-col overflow-hidden rounded-md border border-zinc-800 bg-zinc-900/60"
+    >
+      <div
+        class="flex items-center justify-between border-b border-zinc-800 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-zinc-400"
+      >
+        <span>Props ({{ props().length }})</span>
+      </div>
+      <div class="flex-1 overflow-auto p-1.5">
+        @if (props().length === 0) {
+          <p class="px-2 py-3 text-xs text-zinc-500">
+            Click an empty area on the canvas to add your first strip.
+          </p>
+        }
+        @for (prop of props(); track prop.id) {
+          <div
+            class="prop-row"
+            [class.selected]="selectedPropId() === prop.id"
+            (click)="selectProp(prop.id)"
+          >
+            <span class="swatch"></span>
+            <span class="truncate">{{ prop.name }}</span>
+            <span class="count">{{ prop.pixel_count }}px</span>
+          </div>
+        }
+      </div>
+    </aside>
+
+    <!-- Center: SVG stage -->
+    <div class="stage canvas-wrapper">
       <svg
         #svg
         class="canvas"
@@ -90,7 +123,6 @@
         preserveAspectRatio="xMidYMid meet"
         (pointerdown)="onCanvasPointerDown($event)"
       >
-        <!-- Subtle grid -->
         <defs>
           <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
             <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#27272a" stroke-width="0.5" />
@@ -154,53 +186,76 @@
       </svg>
     </div>
 
-    @if (selectedProp(); as sel) {
-      <div class="mt-3 flex flex-wrap items-end gap-3 text-sm">
-        <label class="flex flex-col">
-          <span class="text-xs text-zinc-400">Prop name</span>
-          <input
-            class="rounded border border-zinc-700 bg-zinc-800 px-2 py-1"
-            [value]="sel.name"
-            (input)="updateSelectedProp({ name: $any($event.target).value })"
-          />
-        </label>
-        <label class="flex flex-col">
-          <span class="text-xs text-zinc-400">Pixel offset</span>
-          <input
-            type="number"
-            min="0"
-            class="w-24 rounded border border-zinc-700 bg-zinc-800 px-2 py-1"
-            [value]="sel.pixel_offset"
-            (change)="updateSelectedProp({ pixel_offset: +$any($event.target).value })"
-          />
-        </label>
-        <label class="flex flex-col">
-          <span class="text-xs text-zinc-400">Pixel count</span>
-          <input
-            type="number"
-            min="1"
-            class="w-24 rounded border border-zinc-700 bg-zinc-800 px-2 py-1"
-            [value]="sel.pixel_count"
-            (change)="updateSelectedProp({ pixel_count: +$any($event.target).value })"
-          />
-        </label>
-        <button
-          type="button"
-          class="rounded bg-red-600 px-3 py-1 text-sm font-medium hover:bg-red-500"
-          (click)="removeSelected()"
-        >
-          Remove prop
-        </button>
+    <!-- Right inspector -->
+    <aside
+      class="inspector flex flex-col overflow-hidden rounded-md border border-zinc-800 bg-zinc-900/60"
+    >
+      <div
+        class="border-b border-zinc-800 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-zinc-400"
+      >
+        Inspector
       </div>
-    }
+      <div class="flex-1 overflow-auto p-3 text-sm">
+        @if (selectedProp(); as sel) {
+          <div class="flex flex-col gap-3">
+            <label class="flex flex-col gap-1">
+              <span class="text-xs text-zinc-400">Prop name</span>
+              <input
+                class="rounded border border-zinc-700 bg-zinc-800 px-2 py-1"
+                [value]="sel.name"
+                (input)="updateSelectedProp({ name: $any($event.target).value })"
+              />
+            </label>
+            <label class="flex flex-col gap-1">
+              <span class="text-xs text-zinc-400">Pixel offset</span>
+              <input
+                type="number"
+                min="0"
+                class="rounded border border-zinc-700 bg-zinc-800 px-2 py-1"
+                [value]="sel.pixel_offset"
+                (change)="updateSelectedProp({ pixel_offset: +$any($event.target).value })"
+              />
+            </label>
+            <label class="flex flex-col gap-1">
+              <span class="text-xs text-zinc-400">Pixel count</span>
+              <input
+                type="number"
+                min="1"
+                class="rounded border border-zinc-700 bg-zinc-800 px-2 py-1"
+                [value]="sel.pixel_count"
+                (change)="updateSelectedProp({ pixel_count: +$any($event.target).value })"
+              />
+            </label>
+            <button
+              type="button"
+              class="mt-2 rounded bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-500"
+              (click)="removeSelected()"
+            >
+              Remove prop
+            </button>
+          </div>
+        } @else {
+          <p class="text-xs text-zinc-500">
+            Select a prop on the canvas or in the list to edit its properties.
+          </p>
+          <p class="mt-3 text-xs text-zinc-600">
+            Tips:<br />
+            · Click empty canvas to add a strip<br />
+            · Drag endpoints to reshape<br />
+            · Drag the strip body to move<br />
+            · Press Delete to remove selection
+          </p>
+        }
+      </div>
+    </aside>
   } @else {
-    <p class="text-sm text-zinc-400">
-      Select a layout from the library or click <strong>New</strong> to start
-      placing props.
-    </p>
+    <div
+      class="stage flex items-center justify-center rounded-md border border-dashed border-zinc-700 bg-zinc-950 text-sm text-zinc-400"
+      style="grid-column: 1 / -1;"
+    >
+      Select a layout from the library or click
+      <strong class="mx-1 text-zinc-200">New</strong>
+      to start placing props.
+    </div>
   }
-
-  @if (layouts.lastError(); as err) {
-    <p class="mt-2 text-xs text-red-400">{{ err }}</p>
-  }
-</section>
+</div>

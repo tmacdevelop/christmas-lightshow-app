@@ -1,2 +1,11 @@
 /target
 **/*.rs.bk
+
+# Local environment / secrets
+.env
+.env.local
+*.env
+
+# Spotify token cache (encrypted, but still personal)
+spotify-token.bin
+spotify-cache/

@@ -18,3 +18,6 @@ shows_dir = "shows"
 
 # Directory holding saved layout JSON files (Phase 3 layout designer).
 layouts_dir = "layouts"
+
+# Directory holding uploaded audio files + analysis (Phase 4 music sync).
+audio_dir = "audio"

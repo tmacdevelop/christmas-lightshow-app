@@ -8,6 +8,7 @@
 //!   `?format=json` for debug).
 //! - `*    /api/*` — REST control plane (see [`rest`] module).
 
+mod audio_store;
 mod config;
 mod layout_store;
 mod rest;
@@ -24,8 +25,8 @@ use tower_http::trace::TraceLayer;
 use tracing_subscriber::EnvFilter;
 
 use crate::{
-    config::Config, layout_store::LayoutStore, state::AppState, store::SequenceStore,
-    ws::ws_handler,
+    audio_store::AudioStore, config::Config, layout_store::LayoutStore, state::AppState,
+    store::SequenceStore, ws::ws_handler,
 };
 
 const CONFIG_PATH_ENV: &str = "LIGHTSHOW_CONFIG";
@@ -63,11 +64,15 @@ async fn main() -> anyhow::Result<()> {
     let layouts = Arc::new(LayoutStore::open(&config.layouts_dir)?);
     tracing::info!(path = %config.layouts_dir.display(), count = layouts.list().len(), "layout store opened");
 
+    let audio = Arc::new(AudioStore::open(&config.audio_dir)?);
+    tracing::info!(path = %config.audio_dir.display(), count = audio.list().len(), "audio store opened");
+
     let state = AppState {
         renderer: Arc::clone(&virtual_renderer),
         show: Arc::clone(&show),
         store: Arc::clone(&store),
         layouts: Arc::clone(&layouts),
+        audio: Arc::clone(&audio),
         active_layout: Arc::new(Mutex::new(None)),
     };
 

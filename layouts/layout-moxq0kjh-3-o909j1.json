@@ -1,0 +1,467 @@
+{
+  "id": "layout-moxq0kjh-3-o909j1",
+  "name": "I love you",
+  "width": 800.0,
+  "height": 500.0,
+  "props": [
+    {
+      "id": "prop-moxq0ndc-4-itwn8o",
+      "name": "Strip 1",
+      "pixel_offset": 0,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 77.84184,
+          "y": 61.545223
+        },
+        "end": {
+          "x": 177.84184,
+          "y": 61.545223
+        }
+      }
+    },
+    {
+      "id": "prop-moxq0okx-5-xeilxz",
+      "name": "Strip 2",
+      "pixel_offset": 30,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 127.04558,
+          "y": 139.79558
+        },
+        "end": {
+          "x": 128.19879,
+          "y": 62.424442
+        }
+      }
+    },
+    {
+      "id": "prop-moxq0ths-6-0wxggg",
+      "name": "Strip 3",
+      "pixel_offset": 60,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 77.40253,
+          "y": 141.55402
+        },
+        "end": {
+          "x": 177.40253,
+          "y": 141.55402
+        }
+      }
+    },
+    {
+      "id": "prop-moxq0x7w-7-v727nw",
+      "name": "Strip 4",
+      "pixel_offset": 90,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 223.25645,
+          "y": 144.63127
+        },
+        "end": {
+          "x": 223.0917,
+          "y": 52.313442
+        }
+      }
+    },
+    {
+      "id": "prop-moxq11a1-8-ntkv9c",
+      "name": "Strip 5",
+      "pixel_offset": 120,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 223.25645,
+          "y": 145.5105
+        },
+        "end": {
+          "x": 323.25644,
+          "y": 145.5105
+        }
+      }
+    },
+    {
+      "id": "prop-moxq147m-9-ugjdg0",
+      "name": "Strip 6",
+      "pixel_offset": 150,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 356.37012,
+          "y": 101.98923
+        },
+        "end": {
+          "x": 377.73203,
+          "y": 52.753048
+        }
+      }
+    },
+    {
+      "id": "prop-moxq18ab-a-ryx6ke",
+      "name": "Strip 7",
+      "pixel_offset": 180,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 378.7754,
+          "y": 52.313442
+        },
+        "end": {
+          "x": 444.94785,
+          "y": 54.511486
+        }
+      }
+    },
+    {
+      "id": "prop-moxq1csq-b-yy6mj4",
+      "name": "Strip 8",
+      "pixel_offset": 210,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 459.6101,
+          "y": 101.98923
+        },
+        "end": {
+          "x": 446.26578,
+          "y": 54.511486
+        }
+      }
+    },
+    {
+      "id": "prop-moxq1ihy-c-ot4h07",
+      "name": "Strip 9",
+      "pixel_offset": 240,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 431.05435,
+          "y": 145.9501
+        },
+        "end": {
+          "x": 459.44537,
+          "y": 101.98923
+        }
+      }
+    },
+    {
+      "id": "prop-moxq1n84-d-ocey2b",
+      "name": "Strip 10",
+      "pixel_offset": 270,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 358.5667,
+          "y": 108.14375
+        },
+        "end": {
+          "x": 430.88962,
+          "y": 145.9501
+        }
+      }
+    },
+    {
+      "id": "prop-moxq1qne-e-o2vhgd",
+      "name": "Strip 11",
+      "pixel_offset": 300,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 502.66336,
+          "y": 56.70953
+        },
+        "end": {
+          "x": 552.14166,
+          "y": 146.38971
+        }
+      }
+    },
+    {
+      "id": "prop-moxq1v6z-f-uwd75m",
+      "name": "Strip 12",
+      "pixel_offset": 330,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 552.3064,
+          "y": 147.26894
+        },
+        "end": {
+          "x": 600.02747,
+          "y": 55.3907
+        }
+      }
+    },
+    {
+      "id": "prop-moxq1yg5-g-m5jeh5",
+      "name": "Strip 13",
+      "pixel_offset": 360,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 633.1411,
+          "y": 58.467964
+        },
+        "end": {
+          "x": 633.4157,
+          "y": 143.31245
+        }
+      }
+    },
+    {
+      "id": "prop-moxq23pg-h-c8wn0z",
+      "name": "Strip 14",
+      "pixel_offset": 390,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 634.0198,
+          "y": 60.2264
+        },
+        "end": {
+          "x": 704.14606,
+          "y": 60.666008
+        }
+      }
+    },
+    {
+      "id": "prop-moxq251y-i-9infrq",
+      "name": "Strip 15",
+      "pixel_offset": 420,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 635.77704,
+          "y": 105.506096
+        },
+        "end": {
+          "x": 705.0247,
+          "y": 105.506096
+        }
+      }
+    },
+    {
+      "id": "prop-moxq27vq-j-4lsxm3",
+      "name": "Strip 16",
+      "pixel_offset": 450,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 633.58044,
+          "y": 143.31245
+        },
+        "end": {
+          "x": 708.9786,
+          "y": 143.75206
+        }
+      }
+    },
+    {
+      "id": "prop-moxq2e4k-k-0u4vti",
+      "name": "Strip 17",
+      "pixel_offset": 480,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 191.18616,
+          "y": 221.1232
+        },
+        "end": {
+          "x": 248.57222,
+          "y": 280.47037
+        }
+      }
+    },
+    {
+      "id": "prop-moxq2hcf-l-f1a0wn",
+      "name": "Strip 18",
+      "pixel_offset": 510,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 250.05492,
+          "y": 281.3496
+        },
+        "end": {
+          "x": 286.79297,
+          "y": 219.80437
+        }
+      }
+    },
+    {
+      "id": "prop-moxq2kun-m-55uhph",
+      "name": "Strip 19",
+      "pixel_offset": 540,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 248.73695,
+          "y": 345.97208
+        },
+        "end": {
+          "x": 249.01154,
+          "y": 282.22882
+        }
+      }
+    },
+    {
+      "id": "prop-moxq2nke-n-23vjdz",
+      "name": "Strip 20",
+      "pixel_offset": 570,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 333.96484,
+          "y": 280.91
+        },
+        "end": {
+          "x": 375.97473,
+          "y": 227.71733
+        }
+      }
+    },
+    {
+      "id": "prop-moxq2rl2-o-93wntl",
+      "name": "Strip 21",
+      "pixel_offset": 600,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 388.87973,
+          "y": 339.81757
+        },
+        "end": {
+          "x": 332.48215,
+          "y": 280.03076
+        }
+      }
+    },
+    {
+      "id": "prop-moxq2vc7-p-el4gg1",
+      "name": "Strip 22",
+      "pixel_offset": 630,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 390.1977,
+          "y": 338.49875
+        },
+        "end": {
+          "x": 424.73917,
+          "y": 282.66843
+        }
+      }
+    },
+    {
+      "id": "prop-moxq2ype-q-cdghy9",
+      "name": "Strip 23",
+      "pixel_offset": 660,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 376.5788,
+          "y": 227.27773
+        },
+        "end": {
+          "x": 424.73917,
+          "y": 283.98724
+        }
+      }
+    },
+    {
+      "id": "prop-moxq31ve-r-aurnif",
+      "name": "Strip 24",
+      "pixel_offset": 690,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 464.44263,
+          "y": 303.33005
+        },
+        "end": {
+          "x": 468.23175,
+          "y": 227.71733
+        }
+      }
+    },
+    {
+      "id": "prop-moxq366r-s-i6cvdl",
+      "name": "Strip 25",
+      "pixel_offset": 720,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 464.44263,
+          "y": 304.64886
+        },
+        "end": {
+          "x": 503.37726,
+          "y": 342.4552
+        }
+      }
+    },
+    {
+      "id": "prop-moxq39bb-t-tf0f9l",
+      "name": "Strip 26",
+      "pixel_offset": 750,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 503.98132,
+          "y": 342.89484
+        },
+        "end": {
+          "x": 544.6733,
+          "y": 302.89044
+        }
+      }
+    },
+    {
+      "id": "prop-moxq3cw3-u-pbjmjx",
+      "name": "Strip 27",
+      "pixel_offset": 780,
+      "pixel_count": 30,
+      "geometry": {
+        "type": "strip",
+        "start": {
+          "x": 545.7166,
+          "y": 303.33005
+        },
+        "end": {
+          "x": 545.9912,
+          "y": 228.59654
+        }
+      }
+    }
+  ]
+}

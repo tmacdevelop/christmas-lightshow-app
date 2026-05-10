@@ -1,26 +1,31 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
-import { ControlPanelComponent } from './control-panel';
-import { LayoutDesignerComponent } from './layout-designer';
 import { SimulatorComponent } from './simulator';
-import { TimelineComponent } from './timeline';
+import { WorkspaceComponent } from './shell/workspace';
+
+/**
+ * The window can be opened in two views:
+ *  - default: the full workspace (shell + designer + timeline + simulator).
+ *  - `?view=simulator`: just the simulator, fullscreen — used for the pop-out
+ *    window so the user can drag it to a second monitor.
+ */
+function readView(): 'workspace' | 'simulator' {
+  if (typeof window === 'undefined') return 'workspace';
+  const params = new URLSearchParams(window.location.search);
+  return params.get('view') === 'simulator' ? 'simulator' : 'workspace';
+}
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    SimulatorComponent,
-    ControlPanelComponent,
-    TimelineComponent,
-    LayoutDesignerComponent,
-  ],
+  imports: [WorkspaceComponent, SimulatorComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="flex h-full min-h-screen flex-col gap-4 bg-zinc-950 p-6 text-zinc-100">
-      <app-simulator class="flex-1"></app-simulator>
-      <app-control-panel></app-control-panel>
-      <app-layout-designer></app-layout-designer>
-      <app-timeline></app-timeline>
-    </div>
+    @if (view() === 'simulator') {
+      <app-simulator variant="popout" class="block h-screen w-screen bg-black" />
+    } @else {
+      <app-workspace />
+    }
   `,
   styles: [
     `
@@ -31,4 +36,6 @@ import { TimelineComponent } from './timeline';
     `,
   ],
 })
-export class App {}
+export class App {
+  protected readonly view = signal(readView());
+}
