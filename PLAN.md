@@ -1,6 +1,6 @@
 # Christmas Light Show App — Project Plan 🎄✨
 
-A phased plan to build a Christmas light show system using **Rust** (backend / hardware control) and **Angular** (web UI / show designer / simulator), starting with an in-browser simulator and progressing to driving real LED hardware in an apartment, then scaling to a full yard show.
+A phased plan to build a Christmas light show system using **Rust** (backend / hardware control) and **Angular** (web UI / show designer / simulator), starting with an in-browser simulator and progressing to whole-yard, music-synced, FM-broadcast displays.
 
 ---
 
@@ -146,9 +146,16 @@ Total: **~$80–$150** for a starter indoor show.
 ### Phase 3 — Sequencer & Timeline Editor (Weeks 5–7)
 - Timeline component, drag-and-drop effects per light group
 - Layout designer (place virtual props on a "room map")
+- **Stacked-strip "virtual matrix" groups:** group N parallel strips of equal
+  length into a 2D grid prop and run matrix-style animations across them
+  (per-row chases, vertical/horizontal wipes, scrolling text, plasma, 2D
+  noise). The group exposes an (x, y) → pixel-index mapping (with optional
+  serpentine/zig-zag wiring) so the same effect engine can address it as a
+  W×H matrix; the renderer still emits a flat `Vec<Rgb>` per strip
 - Save/load sequences + layouts as JSON in SQLite
 - Frame-accurate playback engine (~40 FPS)
-- ✅ **Deliverable:** Reusable, saveable shows previewed in the simulator
+- ✅ **Deliverable:** Reusable, saveable shows previewed in the simulator,
+  including 2D effects driven across stacked strips
 
 ### Phase 4 — Music Synchronization (Weeks 8–10)
 - Audio decode (`symphonia`), real-time FFT (`rustfft`), beat detection
@@ -163,10 +170,37 @@ Total: **~$80–$150** for a starter indoor show.
 - Flip a config flag — **the same shows now play on real lights**
 - ✅ **Deliverable:** First physical light show on a mini tree
 
+### Phase 4.75 — Interop & Adoption ⭐
+
+> **Why this phase exists:** the existing Christmas-light hobbyist community
+> has already invested thousands of dollars in controllers (FPP, Falcon,
+> HinksPix, AlphaPix, WLED, Light-O-Rama). They will not throw that gear out
+> to try our app. The single highest-leverage move we can make is to **drive
+> the hardware they already own** and **read/write the file formats they
+> already use**. This converts the project from "yet another sequencer" into
+> a drop-in modern front-end for setups that already work, which is also the
+> foundation for any future SaaS / marketplace monetization.
+
+- **`.fseq` export** (FPP/xLights sequence format, v2.0): serialize the show
+  engine's frame output to FSEQ so any FPP or xLights user can play our
+  shows on their existing controllers.
+- **`.fseq` import** (moved up from Phase 6): round-trip compatibility lets
+  users bring existing libraries into our designer/simulator.
+- **E1.31 (sACN) streaming sender:** implement `SacnRenderer` (UDP, multiple
+  universes, per-universe priority, unicast + multicast). This is the
+  lingua franca of pixel controllers.
+- **DDP sender:** lightweight alternative to sACN, used by WLED and others.
+- **Universe / pixel-mapping config:** UI to map a layout's pixels to
+  (universe, channel) ranges, with import from xLights `xlights_rgbeffects.xml`.
+- **WLED JSON preset export:** for users running plain ESP32 + WLED.
+- ✅ **Deliverable:** A user with an existing FPP/xLights/WLED rig can point
+  our app at their network and run shows on real hardware **without buying
+  anything new** — and can also export `.fseq` files to drop into their
+  current workflow.
+
 ### Phase 5 — Scale Out (Weeks 11–14)
 - Add ESP32 nodes running WLED
-- Implement E1.31 (sACN) and DDP senders in Rust
-- Multi-universe pixel mapping
+- Multi-universe pixel mapping at scale (builds on Phase 4.75 sACN/DDP work)
 - Yard layout designer (2D map of props)
 - ✅ **Deliverable:** Whole-yard synchronized show capability
 
@@ -175,7 +209,6 @@ Total: **~$80–$150** for a starter indoor show.
 - FM transmitter integration (broadcast audio for car radios)
 - Weather pause (rain/wind)
 - Telemetry dashboard (power, controller health)
-- Import [xLights](https://xlights.org/) FSEQ sequences
 - Docker container + systemd unit for Pi deployment
 
 ---
@@ -186,7 +219,7 @@ Total: **~$80–$150** for a starter indoor show.
 
 - **Phase 1:** 2D canvas, each pixel = glowing dot, real-time effect playback
 - **Phase 2:** Drag-and-drop layout designer (strips as lines/curves, strings as paths, matrices as rectangles), snap-to-grid, save layouts as JSON
-- **Phase 3:** Realistic glow with HTML5 Canvas radial gradients, dim-room background, configurable pixel size/spacing
+- **Phase 3:** Realistic glow with HTML5 Canvas radial gradients, dim-room background, configurable pixel size/spacing; stacked-strip groups render as a contiguous 2D grid so matrix effects can be previewed exactly as they'll appear on the wall
 - **Phase 4:** Audio waveform + beat markers, scrubbable timeline, MP4 export
 - **Phase 5 (stretch):** 3D yard view via Three.js for outdoor planning
 
@@ -266,8 +299,9 @@ christmas-lightshow-app/
 - [ ] Implement `Renderer` trait + `VirtualRenderer` (Phase 1)
 - [ ] WebSocket pixel-frame streaming from `axum` (Phase 1)
 - [ ] Angular canvas simulator component + 4 starter effects (Phase 1)
+- [ ] **Interop wedge (Phase 4.75): `.fseq` export + `SacnRenderer` (E1.31)** — highest-leverage step for adoption and any future monetization, since it lets the app drive hardware users already own
 - [ ] Open GitHub issues for each phase as a project roadmap
 
 ---
 
-*Last updated: 2026-05-03*
+*Last updated: 2026-05-09*
