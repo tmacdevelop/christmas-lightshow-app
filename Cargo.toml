@@ -3,6 +3,7 @@ resolver = "3"
 members = [
     "crates/controller",
     "crates/sequencer",
+    "crates/audio",
     "crates/api",
 ]
 
@@ -37,6 +38,11 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 anyhow = "1"
 thiserror = "2"
 
+# Audio
+symphonia = { version = "0.5", features = ["mp3", "aac", "ogg", "flac", "wav"] }
+rustfft = "6"
+
 # Workspace-internal crates
 controller = { path = "crates/controller" }
 sequencer = { path = "crates/sequencer" }
+audio = { path = "crates/audio" }

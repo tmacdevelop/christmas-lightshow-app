@@ -32,18 +32,29 @@
 //! - `POST   /api/layouts/:id/activate` — mark a layout as the one the
 //!   simulator should render against.
 //! - `POST   /api/layouts/deactivate`   — clear the active layout.
+//!
+//! Music synchronisation (Phase 4):
+//!
+//! - `POST   /api/audio/upload`         — upload an audio file (multipart).
+//! - `GET    /api/audio`                — list uploaded audio tracks.
+//! - `GET    /api/audio/:id`            — fetch track metadata + analysis.
+//! - `GET    /api/audio/:id/file`       — serve raw audio bytes for browser playback.
+//! - `POST   /api/audio/:id/generate`   — auto-generate a beat-synced sequence.
+//! - `POST   /api/audio/:id/play`       — play the auto-generated sequence.
+//! - `DELETE /api/audio/:id`            — delete a track.
 
 use axum::{
     Json, Router,
-    extract::{Path, State},
-    http::StatusCode,
+    body::Body,
+    extract::{Multipart, Path, State},
+    http::{HeaderMap, HeaderValue, StatusCode, header},
     routing::{get, post},
 };
 use controller::Rgb;
-use sequencer::{EffectKind, Layout, PlaybackInfo, Sequence};
+use sequencer::{Clip, ClipColor, EffectKind, Layout, PlaybackInfo, Sequence};
 use serde::{Deserialize, Serialize};
 
-use crate::state::AppState;
+use crate::{audio_store::AudioTrack, state::AppState};
 
 pub fn router() -> Router<AppState> {
     Router::new()
@@ -68,6 +79,13 @@ pub fn router() -> Router<AppState> {
         )
         .route("/layouts/{id}/activate", post(activate_layout))
         .route("/layouts/deactivate", post(deactivate_layout))
+        // Phase 4: music sync
+        .route("/audio/upload", post(upload_audio))
+        .route("/audio", get(list_audio))
+        .route("/audio/{id}", get(get_audio).delete(delete_audio))
+        .route("/audio/{id}/file", get(serve_audio_file))
+        .route("/audio/{id}/generate", post(generate_sequence))
+        .route("/audio/{id}/play", post(play_audio_sequence))
 }
 
 #[derive(Serialize)]
@@ -394,4 +412,232 @@ async fn activate_layout(
 async fn deactivate_layout(State(state): State<AppState>) -> Json<StatusResponse> {
     set_active_layout_id(&state, None);
     get_status(State(state)).await
+}
+
+// ---------- Phase 4: music sync ----------
+
+fn unique_id() -> String {
+    use std::time::{SystemTime, UNIX_EPOCH};
+    let ts = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .subsec_nanos();
+    format!("{:08x}", ts ^ (std::process::id() << 16))
+}
+
+/// `POST /api/audio/upload` — multipart upload of an audio file.
+async fn upload_audio(
+    State(state): State<AppState>,
+    mut multipart: Multipart,
+) -> Result<Json<AudioTrack>, (StatusCode, String)> {
+    let mut file_bytes: Option<Vec<u8>> = None;
+    let mut filename = String::from("track");
+
+    while let Some(field) = multipart
+        .next_field()
+        .await
+        .map_err(|e| (StatusCode::BAD_REQUEST, format!("multipart error: {e}")))?
+    {
+        if field.name() == Some("file") {
+            if let Some(name) = field.file_name() {
+                filename = name.to_string();
+            }
+            let bytes = field
+                .bytes()
+                .await
+                .map_err(|e| (StatusCode::BAD_REQUEST, format!("read error: {e}")))?;
+            file_bytes = Some(bytes.to_vec());
+            break;
+        }
+    }
+
+    let bytes = file_bytes.ok_or((StatusCode::BAD_REQUEST, "missing 'file' field".into()))?;
+
+    let analysis = audio::analyse(&bytes).map_err(|e| {
+        (
+            StatusCode::UNPROCESSABLE_ENTITY,
+            format!("audio analysis failed: {e}"),
+        )
+    })?;
+
+    let id = unique_id();
+    let track = state
+        .audio
+        .save(&id, &filename, &bytes, analysis)
+        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
+
+    Ok(Json(track))
+}
+
+/// `GET /api/audio` — list all uploaded tracks.
+async fn list_audio(State(state): State<AppState>) -> Json<Vec<AudioTrack>> {
+    Json(state.audio.list())
+}
+
+/// `GET /api/audio/:id` — fetch one track's metadata + analysis.
+async fn get_audio(
+    State(state): State<AppState>,
+    Path(id): Path<String>,
+) -> Result<Json<AudioTrack>, (StatusCode, String)> {
+    state.audio.get(&id).map(Json).ok_or((
+        StatusCode::NOT_FOUND,
+        format!("no audio track with id '{id}'"),
+    ))
+}
+
+/// `DELETE /api/audio/:id`
+async fn delete_audio(
+    State(state): State<AppState>,
+    Path(id): Path<String>,
+) -> Result<StatusCode, (StatusCode, String)> {
+    state
+        .audio
+        .delete(&id)
+        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))
+        .map(|_| StatusCode::NO_CONTENT)
+}
+
+/// `GET /api/audio/:id/file` — stream raw audio bytes to the browser.
+async fn serve_audio_file(
+    State(state): State<AppState>,
+    Path(id): Path<String>,
+) -> Result<(HeaderMap, Body), (StatusCode, String)> {
+    let track = state.audio.get(&id).ok_or((
+        StatusCode::NOT_FOUND,
+        format!("no audio track with id '{id}'"),
+    ))?;
+
+    let path = state.audio.audio_path(&id);
+    let bytes = tokio::fs::read(&path)
+        .await
+        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
+
+    // Guess MIME type from extension.
+    let content_type = match track
+        .filename
+        .rsplit('.')
+        .next()
+        .unwrap_or("")
+        .to_lowercase()
+        .as_str()
+    {
+        "mp3" => "audio/mpeg",
+        "ogg" => "audio/ogg",
+        "flac" => "audio/flac",
+        "aac" | "m4a" => "audio/aac",
+        _ => "audio/wav",
+    };
+
+    let mut headers = HeaderMap::new();
+    headers.insert(header::CONTENT_TYPE, HeaderValue::from_static(content_type));
+    headers.insert(
+        header::CONTENT_DISPOSITION,
+        HeaderValue::from_str(&format!("inline; filename=\"{}\"", track.filename))
+            .unwrap_or(HeaderValue::from_static("inline")),
+    );
+
+    Ok((headers, Body::from(bytes)))
+}
+
+/// Beat-flash colours: cycle through these on consecutive beats.
+const BEAT_COLORS: &[(u8, u8, u8)] = &[
+    (255, 0, 0),     // red
+    (0, 255, 0),     // green
+    (255, 255, 0),   // yellow
+    (0, 0, 255),     // blue
+    (255, 128, 0),   // orange
+    (255, 0, 255),   // magenta
+    (0, 255, 255),   // cyan
+    (255, 255, 255), // white
+];
+
+/// `POST /api/audio/:id/generate` — build and save a beat-synced sequence.
+///
+/// Creates one clip per beat that lasts until the next beat (or 500 ms for the
+/// last beat). Effects cycle through the `BEAT_COLORS` palette.
+async fn generate_sequence(
+    State(state): State<AppState>,
+    Path(id): Path<String>,
+) -> Result<Json<Sequence>, (StatusCode, String)> {
+    let track = state.audio.get(&id).ok_or((
+        StatusCode::NOT_FOUND,
+        format!("no audio track with id '{id}'"),
+    ))?;
+
+    let beats = &track.analysis.beats_ms;
+    if beats.is_empty() {
+        return Err((
+            StatusCode::UNPROCESSABLE_ENTITY,
+            "no beats detected — cannot generate a sequence".into(),
+        ));
+    }
+
+    let duration_ms = track.analysis.duration_ms;
+    let mut clips: Vec<Clip> = Vec::with_capacity(beats.len());
+
+    // Cycle: odd beats get Chase, even beats get Solid flash.
+    let effect_kinds = [
+        EffectKind::Chase,
+        EffectKind::Solid,
+        EffectKind::Fade,
+        EffectKind::Rainbow,
+    ];
+
+    for (i, &beat_ms) in beats.iter().enumerate() {
+        let next_ms = beats
+            .get(i + 1)
+            .copied()
+            .unwrap_or_else(|| (beat_ms + 500).min(duration_ms as u32));
+        let clip_duration_ms = (next_ms.saturating_sub(beat_ms)).max(50) as u64;
+        let color = BEAT_COLORS[i % BEAT_COLORS.len()];
+        let kind = effect_kinds[i % effect_kinds.len()];
+
+        clips.push(Clip {
+            id: format!("beat-{i}"),
+            start_ms: beat_ms as u64,
+            duration_ms: clip_duration_ms,
+            kind,
+            color: ClipColor {
+                r: color.0,
+                g: color.1,
+                b: color.2,
+            },
+        });
+    }
+
+    let seq = Sequence {
+        id: format!("audio-{id}"),
+        name: format!("Beat sync — {}", track.filename),
+        duration_ms,
+        clips,
+    };
+
+    let saved = state
+        .store
+        .save(seq)
+        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
+
+    Ok(Json(saved))
+}
+
+/// `POST /api/audio/:id/play` — play the auto-generated beat-synced sequence
+/// (generates it first if it doesn't exist yet).
+async fn play_audio_sequence(
+    State(state): State<AppState>,
+    Path(id): Path<String>,
+) -> Result<Json<StatusResponse>, (StatusCode, String)> {
+    let seq_id = format!("audio-{id}");
+
+    // Generate if missing.
+    if state.store.get(&seq_id).is_none() {
+        let _ = generate_sequence(State(state.clone()), Path(id)).await?;
+    }
+
+    let seq = state.store.get(&seq_id).ok_or((
+        StatusCode::INTERNAL_SERVER_ERROR,
+        "sequence missing after generate".into(),
+    ))?;
+
+    with_show(&state, |s| s.play_sequence(seq, false));
+    Ok(get_status(State(state)).await)
 }

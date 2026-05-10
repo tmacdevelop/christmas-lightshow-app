@@ -71,7 +71,13 @@ cd ui && pnpm install && cd ..
 
 ### Running the app
 
-The backend and frontend run as two processes:
+Run both the backend and frontend together with:
+
+```bash
+./dev.sh
+```
+
+Or start them separately:
 
 ```bash
 # Terminal 1 — backend (axum + show engine)
@@ -107,6 +113,13 @@ Override the config path with the `LIGHTSHOW_CONFIG` environment variable.
 ---
 
 ## Development
+
+Build both the Rust workspace and the Angular frontend:
+
+```bash
+cargo build --workspace
+cd ui && pnpm exec ng build --configuration development && cd ..
+```
 
 Run the same checks CI runs:
 

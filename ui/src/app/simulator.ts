@@ -5,6 +5,7 @@ import {
   computed,
   effect,
   inject,
+  input,
   signal,
   viewChild,
   AfterViewInit,
@@ -18,6 +19,12 @@ import { ShowControlService } from './show-control.service';
 
 const DEFAULT_WS_URL = '/ws';
 const STATUS_POLL_MS = 1000;
+
+/**
+ * Inputs for the popped-out window. Hides chrome (header / connection form)
+ * and lets the canvas fill the entire viewport.
+ */
+export type SimulatorVariant = 'embedded' | 'popout';
 
 @Component({
   selector: 'app-simulator',
@@ -33,6 +40,9 @@ export class SimulatorComponent implements AfterViewInit, OnDestroy {
   private readonly layouts = inject(LayoutService);
 
   protected readonly canvasRef = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
+
+  /** 'popout' hides chrome so the canvas fills the window. */
+  readonly variant = input<SimulatorVariant>('embedded');
 
   protected readonly url = signal(DEFAULT_WS_URL);
   protected readonly state = this.socket.state;
@@ -142,6 +152,15 @@ export class SimulatorComponent implements AfterViewInit, OnDestroy {
 
   protected disconnect(): void {
     this.socket.disconnect();
+  }
+
+  /** Open a new window showing only the simulator, filling the viewport. */
+  protected popOut(): void {
+    const url = new URL(window.location.href);
+    url.searchParams.set('view', 'simulator');
+    url.hash = '';
+    const features = 'width=900,height=600,menubar=no,toolbar=no,location=no';
+    window.open(url.toString(), 'lightshow-simulator', features);
   }
 
   private startRenderLoop(): void {

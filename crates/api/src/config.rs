@@ -21,10 +21,17 @@ pub struct Config {
     /// Directory holding layout JSON files. Defaults to `./layouts`.
     #[serde(default = "default_layouts_dir")]
     pub layouts_dir: PathBuf,
+    /// Directory holding uploaded audio files + analysis. Defaults to `./audio`.
+    #[serde(default = "default_audio_dir")]
+    pub audio_dir: PathBuf,
 }
 
 fn default_shows_dir() -> PathBuf {
     PathBuf::from("shows")
+}
+
+fn default_audio_dir() -> PathBuf {
+    PathBuf::from("audio")
 }
 
 fn default_layouts_dir() -> PathBuf {
