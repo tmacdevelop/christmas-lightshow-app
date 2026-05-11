@@ -1,0 +1,5056 @@
+{
+  "id": "spotify-3dvhNq0P4rNaFqmj21jKF5",
+  "name": "Trans-Siberian Orchestra — Wizards in Winter - Instrumental",
+  "duration_ms": 185933,
+  "clips": [
+    {
+      "id": "c000000",
+      "start_ms": 0,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 0,
+        "g": 60,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000001",
+      "start_ms": 405,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 200,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000002",
+      "start_ms": 810,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 90,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000003",
+      "start_ms": 1215,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 220,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000004",
+      "start_ms": 1619,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 120,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000005",
+      "start_ms": 2024,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 60,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000006",
+      "start_ms": 2429,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 0,
+        "g": 60,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000007",
+      "start_ms": 2834,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 200,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000008",
+      "start_ms": 3239,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 90,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000009",
+      "start_ms": 3644,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 220,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000010",
+      "start_ms": 4049,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 120,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000011",
+      "start_ms": 4453,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 60,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000012",
+      "start_ms": 4858,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 0,
+        "g": 60,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000013",
+      "start_ms": 5263,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 200,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000014",
+      "start_ms": 5668,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 90,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000015",
+      "start_ms": 6073,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 220,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000016",
+      "start_ms": 6478,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000017",
+      "start_ms": 6883,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 50,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000018",
+      "start_ms": 7287,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 0,
+        "b": 60
+      }
+    },
+    {
+      "id": "c000019",
+      "start_ms": 7692,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 130,
+        "b": 30
+      }
+    },
+    {
+      "id": "c000020",
+      "start_ms": 8097,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000021",
+      "start_ms": 8502,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000022",
+      "start_ms": 8907,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000023",
+      "start_ms": 9312,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 50,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000024",
+      "start_ms": 9717,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 0,
+        "b": 60
+      }
+    },
+    {
+      "id": "c000025",
+      "start_ms": 10121,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 130,
+        "b": 30
+      }
+    },
+    {
+      "id": "c000026",
+      "start_ms": 10526,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000027",
+      "start_ms": 10931,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000028",
+      "start_ms": 11336,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000029",
+      "start_ms": 11741,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 50,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000030",
+      "start_ms": 12146,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 0,
+        "b": 60
+      }
+    },
+    {
+      "id": "c000031",
+      "start_ms": 12551,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 130,
+        "b": 30
+      }
+    },
+    {
+      "id": "c000032",
+      "start_ms": 12955,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 200,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000033",
+      "start_ms": 13360,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 230,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000034",
+      "start_ms": 13765,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 30,
+        "g": 60,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000035",
+      "start_ms": 14170,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 130,
+        "g": 0,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000036",
+      "start_ms": 14575,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 30,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000037",
+      "start_ms": 14980,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 220,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000038",
+      "start_ms": 15385,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 200,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000039",
+      "start_ms": 15789,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 230,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000040",
+      "start_ms": 16194,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 30,
+        "g": 60,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000041",
+      "start_ms": 16599,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 130,
+        "g": 0,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000042",
+      "start_ms": 17004,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 30,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000043",
+      "start_ms": 17409,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 220,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000044",
+      "start_ms": 17814,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 200,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000045",
+      "start_ms": 18219,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 230,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000046",
+      "start_ms": 18623,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 30,
+        "g": 60,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000047",
+      "start_ms": 19028,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 130,
+        "g": 0,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000048",
+      "start_ms": 19433,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 90
+      }
+    },
+    {
+      "id": "c000049",
+      "start_ms": 19838,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 50,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000050",
+      "start_ms": 20243,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 100
+      }
+    },
+    {
+      "id": "c000051",
+      "start_ms": 20648,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000052",
+      "start_ms": 21053,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 0,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000053",
+      "start_ms": 21457,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 160,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000054",
+      "start_ms": 21862,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 90
+      }
+    },
+    {
+      "id": "c000055",
+      "start_ms": 22267,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 50,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000056",
+      "start_ms": 22672,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 100
+      }
+    },
+    {
+      "id": "c000057",
+      "start_ms": 23077,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000058",
+      "start_ms": 23482,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 0,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000059",
+      "start_ms": 23887,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 160,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000060",
+      "start_ms": 24292,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 90
+      }
+    },
+    {
+      "id": "c000061",
+      "start_ms": 24696,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 50,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000062",
+      "start_ms": 25101,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 100
+      }
+    },
+    {
+      "id": "c000063",
+      "start_ms": 25506,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000064",
+      "start_ms": 25911,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 120,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000065",
+      "start_ms": 26316,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 60,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000066",
+      "start_ms": 26721,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 0,
+        "g": 60,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000067",
+      "start_ms": 27126,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 200,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000068",
+      "start_ms": 27530,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 90,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000069",
+      "start_ms": 27935,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 220,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000070",
+      "start_ms": 28340,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 120,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000071",
+      "start_ms": 28745,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 60,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000072",
+      "start_ms": 29150,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 0,
+        "g": 60,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000073",
+      "start_ms": 29555,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 200,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000074",
+      "start_ms": 29960,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 90,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000075",
+      "start_ms": 30364,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 220,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000076",
+      "start_ms": 30769,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 120,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000077",
+      "start_ms": 31174,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 60,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000078",
+      "start_ms": 31579,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 0,
+        "g": 60,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000079",
+      "start_ms": 31984,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 200,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000080",
+      "start_ms": 32389,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000081",
+      "start_ms": 32794,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000082",
+      "start_ms": 33198,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000083",
+      "start_ms": 33603,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 50,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000084",
+      "start_ms": 34008,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 0,
+        "b": 60
+      }
+    },
+    {
+      "id": "c000085",
+      "start_ms": 34413,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 130,
+        "b": 30
+      }
+    },
+    {
+      "id": "c000086",
+      "start_ms": 34818,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000087",
+      "start_ms": 35223,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000088",
+      "start_ms": 35628,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000089",
+      "start_ms": 36032,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 50,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000090",
+      "start_ms": 36437,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 0,
+        "b": 60
+      }
+    },
+    {
+      "id": "c000091",
+      "start_ms": 36842,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 130,
+        "b": 30
+      }
+    },
+    {
+      "id": "c000092",
+      "start_ms": 37247,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000093",
+      "start_ms": 37652,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000094",
+      "start_ms": 38057,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000095",
+      "start_ms": 38462,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 50,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000096",
+      "start_ms": 38866,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 30,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000097",
+      "start_ms": 39271,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 220,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000098",
+      "start_ms": 39676,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 200,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000099",
+      "start_ms": 40081,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 230,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000100",
+      "start_ms": 40486,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 30,
+        "g": 60,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000101",
+      "start_ms": 40891,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 130,
+        "g": 0,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000102",
+      "start_ms": 41296,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 30,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000103",
+      "start_ms": 41700,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 220,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000104",
+      "start_ms": 42105,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 200,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000105",
+      "start_ms": 42510,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 230,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000106",
+      "start_ms": 42915,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 30,
+        "g": 60,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000107",
+      "start_ms": 43320,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 130,
+        "g": 0,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000108",
+      "start_ms": 43725,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 30,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000109",
+      "start_ms": 44130,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 220,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000110",
+      "start_ms": 44534,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 200,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000111",
+      "start_ms": 44939,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 230,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000112",
+      "start_ms": 45344,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 0,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000113",
+      "start_ms": 45749,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 160,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000114",
+      "start_ms": 46154,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 90
+      }
+    },
+    {
+      "id": "c000115",
+      "start_ms": 46559,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 50,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000116",
+      "start_ms": 46964,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 100
+      }
+    },
+    {
+      "id": "c000117",
+      "start_ms": 47368,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000118",
+      "start_ms": 47773,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 0,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000119",
+      "start_ms": 48178,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 160,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000120",
+      "start_ms": 48583,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 90
+      }
+    },
+    {
+      "id": "c000121",
+      "start_ms": 48988,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 50,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000122",
+      "start_ms": 49393,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 100
+      }
+    },
+    {
+      "id": "c000123",
+      "start_ms": 49798,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000124",
+      "start_ms": 50202,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 0,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000125",
+      "start_ms": 50607,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 160,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000126",
+      "start_ms": 51012,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 90
+      }
+    },
+    {
+      "id": "c000127",
+      "start_ms": 51417,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 50,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000128",
+      "start_ms": 51822,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 90,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000129",
+      "start_ms": 52227,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 220,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000130",
+      "start_ms": 52632,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 120,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000131",
+      "start_ms": 53036,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 60,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000132",
+      "start_ms": 53441,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 0,
+        "g": 60,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000133",
+      "start_ms": 53846,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 200,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000134",
+      "start_ms": 54251,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 90,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000135",
+      "start_ms": 54656,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 220,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000136",
+      "start_ms": 55061,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 120,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000137",
+      "start_ms": 55466,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 60,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000138",
+      "start_ms": 55870,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 0,
+        "g": 60,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000139",
+      "start_ms": 56275,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 200,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000140",
+      "start_ms": 56680,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 90,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000141",
+      "start_ms": 57085,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 220,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000142",
+      "start_ms": 57490,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 120,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000143",
+      "start_ms": 57895,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 60,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000144",
+      "start_ms": 58300,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 0,
+        "b": 60
+      }
+    },
+    {
+      "id": "c000145",
+      "start_ms": 58704,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 130,
+        "b": 30
+      }
+    },
+    {
+      "id": "c000146",
+      "start_ms": 59109,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000147",
+      "start_ms": 59514,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000148",
+      "start_ms": 59919,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000149",
+      "start_ms": 60324,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 50,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000150",
+      "start_ms": 60729,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 0,
+        "b": 60
+      }
+    },
+    {
+      "id": "c000151",
+      "start_ms": 61134,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 130,
+        "b": 30
+      }
+    },
+    {
+      "id": "c000152",
+      "start_ms": 61538,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000153",
+      "start_ms": 61943,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000154",
+      "start_ms": 62348,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000155",
+      "start_ms": 62753,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 50,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000156",
+      "start_ms": 63158,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 0,
+        "b": 60
+      }
+    },
+    {
+      "id": "c000157",
+      "start_ms": 63563,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 130,
+        "b": 30
+      }
+    },
+    {
+      "id": "c000158",
+      "start_ms": 63968,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000159",
+      "start_ms": 64372,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000160",
+      "start_ms": 64777,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 30,
+        "g": 60,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000161",
+      "start_ms": 65182,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 130,
+        "g": 0,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000162",
+      "start_ms": 65587,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 30,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000163",
+      "start_ms": 65992,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 220,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000164",
+      "start_ms": 66397,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 200,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000165",
+      "start_ms": 66802,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 230,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000166",
+      "start_ms": 67206,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 30,
+        "g": 60,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000167",
+      "start_ms": 67611,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 130,
+        "g": 0,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000168",
+      "start_ms": 68016,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 30,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000169",
+      "start_ms": 68421,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 220,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000170",
+      "start_ms": 68826,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 200,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000171",
+      "start_ms": 69231,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 230,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000172",
+      "start_ms": 69636,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 30,
+        "g": 60,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000173",
+      "start_ms": 70040,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 130,
+        "g": 0,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000174",
+      "start_ms": 70445,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 30,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000175",
+      "start_ms": 70850,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 220,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000176",
+      "start_ms": 71255,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 100
+      }
+    },
+    {
+      "id": "c000177",
+      "start_ms": 71660,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000178",
+      "start_ms": 72065,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 0,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000179",
+      "start_ms": 72470,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 160,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000180",
+      "start_ms": 72875,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 90
+      }
+    },
+    {
+      "id": "c000181",
+      "start_ms": 73279,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 50,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000182",
+      "start_ms": 73684,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 100
+      }
+    },
+    {
+      "id": "c000183",
+      "start_ms": 74089,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000184",
+      "start_ms": 74494,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 0,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000185",
+      "start_ms": 74899,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 160,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000186",
+      "start_ms": 75304,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 90
+      }
+    },
+    {
+      "id": "c000187",
+      "start_ms": 75709,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 50,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000188",
+      "start_ms": 76113,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 100
+      }
+    },
+    {
+      "id": "c000189",
+      "start_ms": 76518,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000190",
+      "start_ms": 76923,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 0,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000191",
+      "start_ms": 77328,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 160,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000192",
+      "start_ms": 77733,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 0,
+        "g": 60,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000193",
+      "start_ms": 78138,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 200,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000194",
+      "start_ms": 78543,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 90,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000195",
+      "start_ms": 78947,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 220,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000196",
+      "start_ms": 79352,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 120,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000197",
+      "start_ms": 79757,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 60,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000198",
+      "start_ms": 80162,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 0,
+        "g": 60,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000199",
+      "start_ms": 80567,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 200,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000200",
+      "start_ms": 80972,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 90,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000201",
+      "start_ms": 81377,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 220,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000202",
+      "start_ms": 81781,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 120,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000203",
+      "start_ms": 82186,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 60,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000204",
+      "start_ms": 82591,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 0,
+        "g": 60,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000205",
+      "start_ms": 82996,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 200,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000206",
+      "start_ms": 83401,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 90,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000207",
+      "start_ms": 83806,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 220,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000208",
+      "start_ms": 84211,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000209",
+      "start_ms": 84615,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 50,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000210",
+      "start_ms": 85020,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 0,
+        "b": 60
+      }
+    },
+    {
+      "id": "c000211",
+      "start_ms": 85425,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 130,
+        "b": 30
+      }
+    },
+    {
+      "id": "c000212",
+      "start_ms": 85830,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000213",
+      "start_ms": 86235,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000214",
+      "start_ms": 86640,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000215",
+      "start_ms": 87045,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 50,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000216",
+      "start_ms": 87449,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 0,
+        "b": 60
+      }
+    },
+    {
+      "id": "c000217",
+      "start_ms": 87854,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 130,
+        "b": 30
+      }
+    },
+    {
+      "id": "c000218",
+      "start_ms": 88259,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000219",
+      "start_ms": 88664,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000220",
+      "start_ms": 89069,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000221",
+      "start_ms": 89474,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 50,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000222",
+      "start_ms": 89879,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 0,
+        "b": 60
+      }
+    },
+    {
+      "id": "c000223",
+      "start_ms": 90283,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 130,
+        "b": 30
+      }
+    },
+    {
+      "id": "c000224",
+      "start_ms": 90688,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 200,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000225",
+      "start_ms": 91093,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 230,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000226",
+      "start_ms": 91498,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 30,
+        "g": 60,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000227",
+      "start_ms": 91903,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 130,
+        "g": 0,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000228",
+      "start_ms": 92308,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 30,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000229",
+      "start_ms": 92713,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 220,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000230",
+      "start_ms": 93117,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 200,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000231",
+      "start_ms": 93522,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 230,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000232",
+      "start_ms": 93927,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 30,
+        "g": 60,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000233",
+      "start_ms": 94332,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 130,
+        "g": 0,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000234",
+      "start_ms": 94737,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 30,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000235",
+      "start_ms": 95142,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 220,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000236",
+      "start_ms": 95547,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 200,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000237",
+      "start_ms": 95951,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 230,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000238",
+      "start_ms": 96356,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 30,
+        "g": 60,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000239",
+      "start_ms": 96761,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 130,
+        "g": 0,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000240",
+      "start_ms": 97166,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 90
+      }
+    },
+    {
+      "id": "c000241",
+      "start_ms": 97571,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 50,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000242",
+      "start_ms": 97976,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 100
+      }
+    },
+    {
+      "id": "c000243",
+      "start_ms": 98381,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000244",
+      "start_ms": 98785,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 0,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000245",
+      "start_ms": 99190,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 160,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000246",
+      "start_ms": 99595,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 90
+      }
+    },
+    {
+      "id": "c000247",
+      "start_ms": 100000,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 50,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000248",
+      "start_ms": 100405,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 100
+      }
+    },
+    {
+      "id": "c000249",
+      "start_ms": 100810,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000250",
+      "start_ms": 101215,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 0,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000251",
+      "start_ms": 101619,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 160,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000252",
+      "start_ms": 102024,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 90
+      }
+    },
+    {
+      "id": "c000253",
+      "start_ms": 102429,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 50,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000254",
+      "start_ms": 102834,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 100
+      }
+    },
+    {
+      "id": "c000255",
+      "start_ms": 103239,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000256",
+      "start_ms": 103644,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 120,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000257",
+      "start_ms": 104049,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 60,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000258",
+      "start_ms": 104453,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 0,
+        "g": 60,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000259",
+      "start_ms": 104858,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 200,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000260",
+      "start_ms": 105263,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 90,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000261",
+      "start_ms": 105668,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 220,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000262",
+      "start_ms": 106073,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 120,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000263",
+      "start_ms": 106478,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 60,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000264",
+      "start_ms": 106883,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 0,
+        "g": 60,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000265",
+      "start_ms": 107287,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 200,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000266",
+      "start_ms": 107692,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 90,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000267",
+      "start_ms": 108097,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 220,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000268",
+      "start_ms": 108502,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 120,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000269",
+      "start_ms": 108907,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 60,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000270",
+      "start_ms": 109312,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 0,
+        "g": 60,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000271",
+      "start_ms": 109717,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 200,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000272",
+      "start_ms": 110121,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000273",
+      "start_ms": 110526,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000274",
+      "start_ms": 110931,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000275",
+      "start_ms": 111336,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 50,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000276",
+      "start_ms": 111741,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 0,
+        "b": 60
+      }
+    },
+    {
+      "id": "c000277",
+      "start_ms": 112146,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 130,
+        "b": 30
+      }
+    },
+    {
+      "id": "c000278",
+      "start_ms": 112551,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000279",
+      "start_ms": 112955,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000280",
+      "start_ms": 113360,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000281",
+      "start_ms": 113765,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 50,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000282",
+      "start_ms": 114170,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 0,
+        "b": 60
+      }
+    },
+    {
+      "id": "c000283",
+      "start_ms": 114575,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 130,
+        "b": 30
+      }
+    },
+    {
+      "id": "c000284",
+      "start_ms": 114980,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000285",
+      "start_ms": 115385,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000286",
+      "start_ms": 115789,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000287",
+      "start_ms": 116194,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 50,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000288",
+      "start_ms": 116599,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 30,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000289",
+      "start_ms": 117004,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 220,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000290",
+      "start_ms": 117409,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 200,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000291",
+      "start_ms": 117814,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 230,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000292",
+      "start_ms": 118219,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 30,
+        "g": 60,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000293",
+      "start_ms": 118623,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 130,
+        "g": 0,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000294",
+      "start_ms": 119028,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 30,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000295",
+      "start_ms": 119433,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 220,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000296",
+      "start_ms": 119838,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 200,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000297",
+      "start_ms": 120243,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 230,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000298",
+      "start_ms": 120648,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 30,
+        "g": 60,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000299",
+      "start_ms": 121053,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 130,
+        "g": 0,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000300",
+      "start_ms": 121458,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 30,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000301",
+      "start_ms": 121862,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 220,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000302",
+      "start_ms": 122267,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 200,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000303",
+      "start_ms": 122672,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 230,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000304",
+      "start_ms": 123077,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 0,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000305",
+      "start_ms": 123482,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 160,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000306",
+      "start_ms": 123887,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 90
+      }
+    },
+    {
+      "id": "c000307",
+      "start_ms": 124292,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 50,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000308",
+      "start_ms": 124696,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 100
+      }
+    },
+    {
+      "id": "c000309",
+      "start_ms": 125101,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000310",
+      "start_ms": 125506,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 0,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000311",
+      "start_ms": 125911,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 160,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000312",
+      "start_ms": 126316,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 90
+      }
+    },
+    {
+      "id": "c000313",
+      "start_ms": 126721,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 50,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000314",
+      "start_ms": 127126,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 100
+      }
+    },
+    {
+      "id": "c000315",
+      "start_ms": 127530,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000316",
+      "start_ms": 127935,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 0,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000317",
+      "start_ms": 128340,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 160,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000318",
+      "start_ms": 128745,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 90
+      }
+    },
+    {
+      "id": "c000319",
+      "start_ms": 129150,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 50,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000320",
+      "start_ms": 129555,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 90,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000321",
+      "start_ms": 129960,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 220,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000322",
+      "start_ms": 130364,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 120,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000323",
+      "start_ms": 130769,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 60,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000324",
+      "start_ms": 131174,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 0,
+        "g": 60,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000325",
+      "start_ms": 131579,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 200,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000326",
+      "start_ms": 131984,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 90,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000327",
+      "start_ms": 132389,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 220,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000328",
+      "start_ms": 132794,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 120,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000329",
+      "start_ms": 133198,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 60,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000330",
+      "start_ms": 133603,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 0,
+        "g": 60,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000331",
+      "start_ms": 134008,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 200,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000332",
+      "start_ms": 134413,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 90,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000333",
+      "start_ms": 134818,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 220,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000334",
+      "start_ms": 135223,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 120,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000335",
+      "start_ms": 135628,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 60,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000336",
+      "start_ms": 136032,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 0,
+        "b": 60
+      }
+    },
+    {
+      "id": "c000337",
+      "start_ms": 136437,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 130,
+        "b": 30
+      }
+    },
+    {
+      "id": "c000338",
+      "start_ms": 136842,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000339",
+      "start_ms": 137247,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000340",
+      "start_ms": 137652,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000341",
+      "start_ms": 138057,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 50,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000342",
+      "start_ms": 138462,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 0,
+        "b": 60
+      }
+    },
+    {
+      "id": "c000343",
+      "start_ms": 138866,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 130,
+        "b": 30
+      }
+    },
+    {
+      "id": "c000344",
+      "start_ms": 139271,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000345",
+      "start_ms": 139676,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000346",
+      "start_ms": 140081,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000347",
+      "start_ms": 140486,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 50,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000348",
+      "start_ms": 140891,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 0,
+        "b": 60
+      }
+    },
+    {
+      "id": "c000349",
+      "start_ms": 141296,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 130,
+        "b": 30
+      }
+    },
+    {
+      "id": "c000350",
+      "start_ms": 141700,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000351",
+      "start_ms": 142105,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000352",
+      "start_ms": 142510,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 30,
+        "g": 60,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000353",
+      "start_ms": 142915,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 130,
+        "g": 0,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000354",
+      "start_ms": 143320,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 30,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000355",
+      "start_ms": 143725,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 220,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000356",
+      "start_ms": 144130,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 200,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000357",
+      "start_ms": 144534,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 230,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000358",
+      "start_ms": 144939,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 30,
+        "g": 60,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000359",
+      "start_ms": 145344,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 130,
+        "g": 0,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000360",
+      "start_ms": 145749,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 30,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000361",
+      "start_ms": 146154,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 220,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000362",
+      "start_ms": 146559,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 200,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000363",
+      "start_ms": 146964,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 230,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000364",
+      "start_ms": 147368,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 30,
+        "g": 60,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000365",
+      "start_ms": 147773,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 130,
+        "g": 0,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000366",
+      "start_ms": 148178,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 30,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000367",
+      "start_ms": 148583,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 220,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000368",
+      "start_ms": 148988,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 100
+      }
+    },
+    {
+      "id": "c000369",
+      "start_ms": 149393,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000370",
+      "start_ms": 149798,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 0,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000371",
+      "start_ms": 150202,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 160,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000372",
+      "start_ms": 150607,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 90
+      }
+    },
+    {
+      "id": "c000373",
+      "start_ms": 151012,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 50,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000374",
+      "start_ms": 151417,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 100
+      }
+    },
+    {
+      "id": "c000375",
+      "start_ms": 151822,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000376",
+      "start_ms": 152227,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 0,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000377",
+      "start_ms": 152632,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 160,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000378",
+      "start_ms": 153036,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 90
+      }
+    },
+    {
+      "id": "c000379",
+      "start_ms": 153441,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 50,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000380",
+      "start_ms": 153846,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 100
+      }
+    },
+    {
+      "id": "c000381",
+      "start_ms": 154251,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000382",
+      "start_ms": 154656,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 0,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000383",
+      "start_ms": 155061,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 160,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000384",
+      "start_ms": 155466,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 0,
+        "g": 60,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000385",
+      "start_ms": 155870,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 200,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000386",
+      "start_ms": 156275,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 90,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000387",
+      "start_ms": 156680,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 220,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000388",
+      "start_ms": 157085,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 120,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000389",
+      "start_ms": 157490,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 60,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000390",
+      "start_ms": 157895,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 0,
+        "g": 60,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000391",
+      "start_ms": 158300,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 200,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000392",
+      "start_ms": 158704,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 90,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000393",
+      "start_ms": 159109,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 220,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000394",
+      "start_ms": 159514,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 120,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000395",
+      "start_ms": 159919,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 60,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000396",
+      "start_ms": 160324,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 0,
+        "g": 60,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000397",
+      "start_ms": 160729,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 200,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000398",
+      "start_ms": 161134,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 90,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000399",
+      "start_ms": 161538,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 220,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000400",
+      "start_ms": 161943,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000401",
+      "start_ms": 162348,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 50,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000402",
+      "start_ms": 162753,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 0,
+        "b": 60
+      }
+    },
+    {
+      "id": "c000403",
+      "start_ms": 163158,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 130,
+        "b": 30
+      }
+    },
+    {
+      "id": "c000404",
+      "start_ms": 163563,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000405",
+      "start_ms": 163968,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000406",
+      "start_ms": 164372,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000407",
+      "start_ms": 164777,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 50,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000408",
+      "start_ms": 165182,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 0,
+        "b": 60
+      }
+    },
+    {
+      "id": "c000409",
+      "start_ms": 165587,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 130,
+        "b": 30
+      }
+    },
+    {
+      "id": "c000410",
+      "start_ms": 165992,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000411",
+      "start_ms": 166397,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000412",
+      "start_ms": 166802,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000413",
+      "start_ms": 167206,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 50,
+        "b": 50
+      }
+    },
+    {
+      "id": "c000414",
+      "start_ms": 167611,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 0,
+        "b": 60
+      }
+    },
+    {
+      "id": "c000415",
+      "start_ms": 168016,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 130,
+        "b": 30
+      }
+    },
+    {
+      "id": "c000416",
+      "start_ms": 168421,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 200,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000417",
+      "start_ms": 168826,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 230,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000418",
+      "start_ms": 169231,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 30,
+        "g": 60,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000419",
+      "start_ms": 169636,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 130,
+        "g": 0,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000420",
+      "start_ms": 170041,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 30,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000421",
+      "start_ms": 170445,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 220,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000422",
+      "start_ms": 170850,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 200,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000423",
+      "start_ms": 171255,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 230,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000424",
+      "start_ms": 171660,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 30,
+        "g": 60,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000425",
+      "start_ms": 172065,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 130,
+        "g": 0,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000426",
+      "start_ms": 172470,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 30,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000427",
+      "start_ms": 172875,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 220,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000428",
+      "start_ms": 173279,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 200,
+        "g": 0,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000429",
+      "start_ms": 173684,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 230,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000430",
+      "start_ms": 174089,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 30,
+        "g": 60,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000431",
+      "start_ms": 174494,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 130,
+        "g": 0,
+        "b": 220
+      }
+    },
+    {
+      "id": "c000432",
+      "start_ms": 174899,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 90
+      }
+    },
+    {
+      "id": "c000433",
+      "start_ms": 175304,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 50,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000434",
+      "start_ms": 175709,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 100
+      }
+    },
+    {
+      "id": "c000435",
+      "start_ms": 176113,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000436",
+      "start_ms": 176518,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 0,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000437",
+      "start_ms": 176923,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 160,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000438",
+      "start_ms": 177328,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 90
+      }
+    },
+    {
+      "id": "c000439",
+      "start_ms": 177733,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 50,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000440",
+      "start_ms": 178138,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 100
+      }
+    },
+    {
+      "id": "c000441",
+      "start_ms": 178543,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000442",
+      "start_ms": 178947,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 220,
+        "g": 0,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000443",
+      "start_ms": 179352,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 160,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000444",
+      "start_ms": 179757,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 90,
+        "b": 90
+      }
+    },
+    {
+      "id": "c000445",
+      "start_ms": 180162,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 50,
+        "b": 0
+      }
+    },
+    {
+      "id": "c000446",
+      "start_ms": 180567,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 255,
+        "g": 220,
+        "b": 100
+      }
+    },
+    {
+      "id": "c000447",
+      "start_ms": 180972,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000448",
+      "start_ms": 181377,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 120,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000449",
+      "start_ms": 181781,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 60,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000450",
+      "start_ms": 182186,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 0,
+        "g": 60,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000451",
+      "start_ms": 182591,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 200,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000452",
+      "start_ms": 182996,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 90,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000453",
+      "start_ms": 183401,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 200,
+        "g": 220,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000454",
+      "start_ms": 183806,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 120,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000455",
+      "start_ms": 184211,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 60,
+        "g": 0,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000456",
+      "start_ms": 184615,
+      "duration_ms": 405,
+      "kind": "chase",
+      "color": {
+        "r": 0,
+        "g": 60,
+        "b": 255
+      }
+    },
+    {
+      "id": "c000457",
+      "start_ms": 185020,
+      "duration_ms": 405,
+      "kind": "fade",
+      "color": {
+        "r": 0,
+        "g": 200,
+        "b": 200
+      }
+    },
+    {
+      "id": "c000458",
+      "start_ms": 185425,
+      "duration_ms": 508,
+      "kind": "fade",
+      "color": {
+        "r": 90,
+        "g": 0,
+        "b": 200
+      }
+    }
+  ]
+}

@@ -19,7 +19,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     Effect, EffectContext, Sequence,
-    effects::{Chase, Fade, Rainbow, Solid},
+    effects::{Chase, Fade, Rainbow, Reactive, ReactiveHandle, Solid},
 };
 
 /// All built-in effects exposed to the API.
@@ -31,6 +31,8 @@ pub enum EffectKind {
     Chase,
     #[default]
     Rainbow,
+    /// Pulse-driven effect for live mic-input / external beat sources.
+    Reactive,
 }
 
 impl EffectKind {
@@ -40,6 +42,7 @@ impl EffectKind {
         EffectKind::Fade,
         EffectKind::Chase,
         EffectKind::Rainbow,
+        EffectKind::Reactive,
     ];
 
     /// Lowercase identifier used on the wire.
@@ -50,17 +53,20 @@ impl EffectKind {
             EffectKind::Fade => "fade",
             EffectKind::Chase => "chase",
             EffectKind::Rainbow => "rainbow",
+            EffectKind::Reactive => "reactive",
         }
     }
 
     /// Whether this effect honors the show-wide color setting.
     #[must_use]
     pub fn uses_color(self) -> bool {
-        !matches!(self, EffectKind::Rainbow)
+        !matches!(self, EffectKind::Rainbow | EffectKind::Reactive)
     }
 
     /// Build a fresh boxed effect for this kind, seeded with `color` where
-    /// applicable.
+    /// applicable. The `Reactive` variant returns a fresh, *unattached*
+    /// effect — prefer [`ShowState::set_kind`] which threads the show's
+    /// persistent [`ReactiveHandle`] through.
     #[must_use]
     pub fn build(self, color: Rgb) -> Box<dyn Effect> {
         match self {
@@ -74,6 +80,7 @@ impl EffectKind {
                 Box::new(Chase::new(color, defaults.speed_hz, defaults.width))
             }
             EffectKind::Rainbow => Box::new(Rainbow::default()),
+            EffectKind::Reactive => Box::new(Reactive::default()),
         }
     }
 }
@@ -96,6 +103,9 @@ pub struct PlaybackInfo {
     pub position_ms: u64,
     pub duration_ms: u64,
     pub looping: bool,
+    /// True while an external clock (e.g. the Spotify Web Playback SDK) is
+    /// driving the playhead via [`ShowState::set_external_playhead`].
+    pub external_sync: bool,
 }
 
 /// Internal sequence-mode bookkeeping.
@@ -114,6 +124,11 @@ struct SequencePlayback {
     duration_ms: u64,
     /// Last computed playhead position (ms), exposed via [`PlaybackInfo`].
     last_position_ms: u64,
+    /// When `Some`, the engine uses this value as the playhead instead of
+    /// its internal monotonic clock. Set by [`ShowState::set_external_playhead`]
+    /// when an external source (e.g. the Spotify Web Playback SDK) is
+    /// driving timing.
+    external_playhead_ms: Option<u64>,
 }
 
 /// Live show state mutated by the REST API and read by the engine.
@@ -124,6 +139,11 @@ pub struct ShowState {
     kind: EffectKind,
     effect: Box<dyn Effect>,
     sequence: Option<SequencePlayback>,
+    /// Persistent handle for the [`EffectKind::Reactive`] effect. Lives on
+    /// the show so REST handlers can push pulses to it regardless of
+    /// whether Reactive is currently selected (a `set_kind(Reactive)` will
+    /// rebuild the effect using this same handle).
+    reactive: ReactiveHandle,
 }
 
 impl ShowState {
@@ -131,14 +151,38 @@ impl ShowState {
     /// given effect/color.
     #[must_use]
     pub fn new(kind: EffectKind, color: Rgb) -> Self {
+        let reactive = ReactiveHandle::default();
+        let effect: Box<dyn Effect> = if matches!(kind, EffectKind::Reactive) {
+            Box::new(Reactive::with_handle(reactive.clone()))
+        } else {
+            kind.build(color)
+        };
         Self {
             playing: true,
             brightness: 1.0,
             color,
             kind,
-            effect: kind.build(color),
+            effect,
             sequence: None,
+            reactive,
         }
+    }
+
+    /// Push a pulse into the reactive effect's handle. Also auto-switches
+    /// to [`EffectKind::Reactive`] if the show isn't already there, so the
+    /// caller (e.g. browser mic listener) doesn't have to flip the mode
+    /// separately.
+    pub fn reactive_pulse(&mut self, intensity: f32, color: Option<Rgb>) {
+        if self.kind != EffectKind::Reactive || self.sequence.is_some() {
+            self.set_kind(EffectKind::Reactive);
+        }
+        self.reactive.pulse(intensity, color);
+    }
+
+    /// Handle for tests or direct integrations.
+    #[must_use]
+    pub fn reactive_handle(&self) -> ReactiveHandle {
+        self.reactive.clone()
     }
 
     /// Wrap in `Arc<Mutex<_>>` for sharing with the engine and API handlers.
@@ -188,6 +232,7 @@ impl ShowState {
                 position_ms: sp.last_position_ms,
                 duration_ms: sp.duration_ms,
                 looping: sp.looping,
+                external_sync: sp.external_playhead_ms.is_some(),
             },
             None => PlaybackInfo {
                 mode: PlaybackMode::Live,
@@ -196,6 +241,7 @@ impl ShowState {
                 position_ms: 0,
                 duration_ms: 0,
                 looping: false,
+                external_sync: false,
             },
         }
     }
@@ -226,7 +272,11 @@ impl ShowState {
         self.sequence = None;
         if kind != self.kind || was_sequencing {
             self.kind = kind;
-            self.effect = kind.build(self.color);
+            self.effect = if matches!(kind, EffectKind::Reactive) {
+                Box::new(Reactive::with_handle(self.reactive.clone()))
+            } else {
+                kind.build(self.color)
+            };
         }
     }
 
@@ -242,15 +292,56 @@ impl ShowState {
             effect: None,
             duration_ms,
             last_position_ms: 0,
+            external_playhead_ms: None,
         });
         self.playing = true;
+    }
+
+    /// Override the sequence playhead with an externally-driven timestamp
+    /// (e.g. the Spotify Web Playback SDK). The next tick will render the
+    /// clip at `position_ms` directly instead of using the engine's monotonic
+    /// clock. No-op in live mode.
+    pub fn set_external_playhead(&mut self, position_ms: u64) {
+        if let Some(sp) = self.sequence.as_mut() {
+            sp.external_playhead_ms = Some(position_ms);
+        }
+    }
+
+    /// Stop honoring an external playhead and resume internal-clock playback
+    /// from the current position.
+    pub fn clear_external_playhead(&mut self) {
+        if let Some(sp) = self.sequence.as_mut() {
+            sp.external_playhead_ms = None;
+            // Re-prime started_at on the next tick so position continues
+            // smoothly from `last_position_ms`.
+            sp.started_at_secs = f32::NAN;
+        }
+    }
+
+    /// One-shot seek: jump the playhead to `position_ms` and continue
+    /// playback from there using the engine's internal clock. Unlike
+    /// [`set_external_playhead`], this does not lock the position — it just
+    /// changes where the next tick starts from. No-op in live mode.
+    pub fn seek_to(&mut self, position_ms: u64) {
+        if let Some(sp) = self.sequence.as_mut() {
+            sp.external_playhead_ms = None;
+            sp.last_position_ms = position_ms;
+            // Force re-seeding on the next tick so it continues from
+            // `last_position_ms` instead of leaping back to wherever the
+            // monotonic clock had reached.
+            sp.started_at_secs = f32::NAN;
+        }
     }
 
     /// Stop sequence playback and return to live mode.
     pub fn stop_sequence(&mut self) {
         if self.sequence.take().is_some() {
             // Re-build the live effect so the live preview is clean.
-            self.effect = self.kind.build(self.color);
+            self.effect = if matches!(self.kind, EffectKind::Reactive) {
+                Box::new(Reactive::with_handle(self.reactive.clone()))
+            } else {
+                self.kind.build(self.color)
+            };
         }
     }
 
@@ -280,12 +371,23 @@ impl ShowState {
 }
 
 fn tick_sequence(sp: &mut SequencePlayback, ctx: EffectContext, out: &mut [Rgb]) {
-    if sp.started_at_secs.is_nan() {
-        sp.started_at_secs = ctx.elapsed_secs;
-    }
-
-    let raw_secs = (ctx.elapsed_secs - sp.started_at_secs).max(0.0);
-    let raw_ms = (raw_secs * 1000.0) as u64;
+    let raw_ms = match sp.external_playhead_ms {
+        Some(ms) => {
+            // External clock authoritative: keep started_at NAN so a later
+            // clear_external_playhead reseeds correctly.
+            ms
+        }
+        None => {
+            if sp.started_at_secs.is_nan() {
+                // Seed so this tick reads as the configured position
+                // (`last_position_ms`) — important after clearing an external
+                // playhead so we don't jump back to 0.
+                sp.started_at_secs = ctx.elapsed_secs - (sp.last_position_ms as f32 / 1000.0);
+            }
+            let raw_secs = (ctx.elapsed_secs - sp.started_at_secs).max(0.0);
+            (raw_secs * 1000.0) as u64
+        }
+    };
 
     let t_ms = if sp.looping && sp.duration_ms > 0 {
         raw_ms % sp.duration_ms
@@ -318,16 +420,30 @@ fn tick_sequence(sp: &mut SequencePlayback, ctx: EffectContext, out: &mut [Rgb])
         Some((idx, clip)) => {
             if sp.active_clip_idx != Some(idx) {
                 sp.active_clip_idx = Some(idx);
-                sp.effect = Some(clip.kind.build(clip.color.into()));
+                // A clip with a baked pattern bypasses effect rendering, so
+                // skip allocating an effect for it.
+                sp.effect = if clip.pattern.is_some() {
+                    None
+                } else {
+                    Some(clip.kind.build(clip.color.into()))
+                };
             }
-            let clip_elapsed_secs = t_ms.saturating_sub(clip.start_ms) as f32 / 1000.0;
-            let clip_ctx = EffectContext {
-                pixel_count: ctx.pixel_count,
-                frame: ctx.frame,
-                elapsed_secs: clip_elapsed_secs,
-            };
-            if let Some(eff) = sp.effect.as_mut() {
-                eff.tick(clip_ctx, out);
+            if let Some(pat) = clip.pattern.as_deref().filter(|p| !p.is_empty()) {
+                // Tile the pattern across the strip.
+                for (i, slot) in out.iter_mut().enumerate() {
+                    let c = pat[i % pat.len()];
+                    *slot = Rgb(c.r, c.g, c.b);
+                }
+            } else {
+                let clip_elapsed_secs = t_ms.saturating_sub(clip.start_ms) as f32 / 1000.0;
+                let clip_ctx = EffectContext {
+                    pixel_count: ctx.pixel_count,
+                    frame: ctx.frame,
+                    elapsed_secs: clip_elapsed_secs,
+                };
+                if let Some(eff) = sp.effect.as_mut() {
+                    eff.tick(clip_ctx, out);
+                }
             }
         }
         None => {
@@ -405,6 +521,7 @@ mod tests {
                 g: rgb.1,
                 b: rgb.2,
             },
+            pattern: None,
         }
     }
 
@@ -487,5 +604,29 @@ mod tests {
         let mut buf = vec![Rgb::BLACK; 2];
         show.tick(ctx(2, 0.0), &mut buf);
         assert!(buf.iter().all(|p| *p == Rgb(99, 99, 99)));
+    }
+
+    #[test]
+    fn clip_pattern_renders_per_pixel_and_tiles() {
+        let mut seq = Sequence::empty("s", "demo", 1_000);
+        let mut clip = solid_clip("a", 0, 1_000, (0, 0, 0));
+        clip.pattern = Some(vec![
+            ClipColor { r: 10, g: 0, b: 0 },
+            ClipColor { r: 0, g: 20, b: 0 },
+            ClipColor { r: 0, g: 0, b: 30 },
+        ]);
+        seq.clips.push(clip);
+
+        let mut show = ShowState::new(EffectKind::Solid, Rgb::BLACK);
+        show.play_sequence(seq, false);
+
+        let mut buf = vec![Rgb::BLACK; 7];
+        show.tick(ctx(7, 0.0), &mut buf);
+        // Pattern tiles across 7 pixels: R G B R G B R
+        assert_eq!(buf[0], Rgb(10, 0, 0));
+        assert_eq!(buf[1], Rgb(0, 20, 0));
+        assert_eq!(buf[2], Rgb(0, 0, 30));
+        assert_eq!(buf[3], Rgb(10, 0, 0));
+        assert_eq!(buf[6], Rgb(10, 0, 0));
     }
 }

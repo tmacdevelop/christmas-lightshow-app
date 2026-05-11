@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
-import { SimulatorComponent } from './simulator';
+import { SimulatorComponent } from './app-components/simulator';
 import { WorkspaceComponent } from './shell/workspace';
 
 /**

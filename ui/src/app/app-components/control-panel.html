@@ -23,25 +23,6 @@
     </div>
   }
 
-  <div class="flex flex-wrap gap-2">
-    <button
-      type="button"
-      class="rounded bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
-      [disabled]="playing()"
-      (click)="start()"
-    >
-      Start
-    </button>
-    <button
-      type="button"
-      class="rounded bg-zinc-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-600 disabled:cursor-not-allowed disabled:opacity-50"
-      [disabled]="!playing()"
-      (click)="stop()"
-    >
-      Stop
-    </button>
-  </div>
-
   <div class="flex flex-col gap-2">
     <span class="text-sm text-zinc-400">Effect</span>
     <div class="flex flex-wrap gap-2">
@@ -96,6 +77,61 @@
         [value]="brightnessDraft()"
         (input)="onBrightnessInput(+($any($event.target)).value)"
         (change)="commitBrightness()"
+      />
+    </label>
+  </div>
+
+  <!-- Mic-driven reactive mode (Phase 4 / Spotify fallback) -->
+  <div
+    class="flex flex-col gap-2 rounded border border-zinc-800 bg-zinc-950/60 p-3"
+  >
+    <div class="flex items-center gap-3">
+      <span class="text-sm font-medium text-zinc-200">Live Mic Sync</span>
+      <span
+        class="rounded-full px-2 py-0.5 text-[10px] uppercase tracking-wider"
+        [class.bg-emerald-700]="mic.running()"
+        [class.text-emerald-100]="mic.running()"
+        [class.bg-zinc-800]="!mic.running()"
+        [class.text-zinc-400]="!mic.running()"
+      >
+        {{ mic.running() ? 'Listening' : 'Off' }}
+      </span>
+      <button
+        type="button"
+        class="ml-auto rounded px-3 py-1 text-xs font-medium"
+        [class.bg-emerald-600]="!mic.running()"
+        [class.text-white]="!mic.running()"
+        [class.hover:bg-emerald-500]="!mic.running()"
+        [class.bg-zinc-700]="mic.running()"
+        [class.hover:bg-zinc-600]="mic.running()"
+        (click)="toggleMic()"
+      >
+        {{ mic.running() ? 'Stop' : 'Start' }}
+      </button>
+    </div>
+    <p class="text-[11px] leading-relaxed text-zinc-500">
+      Reacts to whatever your microphone hears. Works with Spotify, TV, a
+      record player — any sound source. Switches the show into
+      <code class="text-zinc-300">reactive</code> mode automatically.
+    </p>
+    @if (mic.lastError()) {
+      <p class="rounded bg-red-900/40 px-2 py-1 text-[11px] text-red-200">
+        {{ mic.lastError() }}
+      </p>
+    }
+    <label class="flex flex-col gap-1 text-[11px] text-zinc-400">
+      <span class="flex justify-between">
+        <span>Sensitivity</span>
+        <span class="font-mono">{{ mic.threshold().toFixed(2) }}×</span>
+      </span>
+      <input
+        type="range"
+        min="1.1"
+        max="3"
+        step="0.05"
+        class="h-6 w-full cursor-pointer accent-emerald-500"
+        [value]="mic.threshold()"
+        (input)="onThresholdInput(+($any($event.target)).value)"
       />
     </label>
   </div>

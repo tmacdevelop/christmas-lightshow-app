@@ -1,0 +1,438 @@
+<section class="timeline-host flex flex-col gap-4 rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+  <header class="flex flex-wrap items-center gap-3">
+    <h2 class="text-lg font-semibold tracking-tight">Sequencer</h2>
+
+    <select
+      class="rounded border border-zinc-700 bg-zinc-950 px-2 py-1 text-sm focus:border-emerald-500 focus:outline-none"
+      [value]="editingId() ?? ''"
+      (change)="loadSequence($any($event.target).value)"
+    >
+      <option value="" disabled>— select a sequence —</option>
+      @for (s of library(); track s.id) {
+        <option [value]="s.id">{{ s.name }}</option>
+      }
+    </select>
+
+    <button
+      type="button"
+      class="rounded bg-zinc-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-600"
+      (click)="newSequence()"
+    >
+      New
+    </button>
+    <button
+      type="button"
+      class="rounded bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-50"
+      [disabled]="!editing()"
+      (click)="saveSequence()"
+    >
+      Save
+    </button>
+    <button
+      type="button"
+      class="rounded bg-red-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-600 disabled:opacity-50"
+      [disabled]="!editing()"
+      (click)="deleteSequence()"
+    >
+      Delete
+    </button>
+
+    <span class="ml-auto flex items-center gap-2">
+      <button
+        type="button"
+        class="rounded px-3 py-1.5 text-sm font-medium text-white"
+        [class.bg-amber-600]="editMode()"
+        [class.hover:bg-amber-500]="editMode()"
+        [class.bg-zinc-700]="!editMode()"
+        [class.hover:bg-zinc-600]="!editMode()"
+        [attr.aria-pressed]="editMode()"
+        (click)="toggleEditMode()"
+        title="When on, clicking empty timeline space adds a new clip"
+      >
+        {{ editMode() ? 'Editing' : 'Edit' }}
+      </button>
+      <label class="flex items-center gap-1 text-xs text-zinc-400">
+        <input
+          type="checkbox"
+          class="accent-emerald-500"
+          [checked]="looping()"
+          (change)="onLoopingChange($any($event.target).checked)"
+        />
+        Loop
+      </label>
+      <button
+        type="button"
+        class="rounded bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-50"
+        [disabled]="!editing()"
+        (click)="play()"
+      >
+        Play
+      </button>
+      <button
+        type="button"
+        class="rounded bg-zinc-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-600 disabled:opacity-50"
+        [disabled]="!isPlayingThis()"
+        (click)="stop()"
+      >
+        Stop
+      </button>
+    </span>
+  </header>
+
+  <!-- Spotify music transport: shown when the loaded sequence is tied to a
+       Spotify track. The main Play/Stop buttons above start/stop the music
+       too; this row just exposes mute + volume so the user can silence
+       Spotify while still seeing the lights animate. -->
+  @if (spotifyTrackUri()) {
+    <div class="flex flex-wrap items-center gap-2 rounded border border-green-700/40 bg-green-900/15 px-3 py-2 text-sm">
+      <span class="text-xs uppercase tracking-wide text-green-300">Music</span>
+      @if (!spotifyAuthed()) {
+        <span class="text-xs text-amber-300">
+          Log in to Spotify (in the Spotify tab) to hear this track while editing.
+        </span>
+      } @else if (spotifySnapshot(); as snap) {
+        <span class="truncate text-zinc-200">{{ snap.track_name || '—' }}</span>
+        <span class="font-mono text-[11px] text-zinc-400">
+          {{ (snap.position_ms / 1000) | number:'1.1-1' }}s /
+          {{ (snap.duration_ms / 1000) | number:'1.1-1' }}s
+        </span>
+      } @else {
+        <span class="text-xs text-zinc-400">
+          Press Play above to start the song.
+        </span>
+      }
+      <span class="ml-auto flex items-center gap-2">
+        <button
+          type="button"
+          class="rounded px-2 py-1 text-xs font-medium"
+          [class.bg-amber-600]="spotifyMuted()"
+          [class.text-white]="spotifyMuted()"
+          [class.bg-zinc-700]="!spotifyMuted()"
+          [class.text-zinc-200]="!spotifyMuted()"
+          [attr.aria-pressed]="spotifyMuted()"
+          (click)="toggleMusicMute()"
+          title="Mute Spotify audio without stopping playback (engine stays synced)"
+        >
+          {{ spotifyMuted() ? '🔇 Muted' : '🔊 Mute' }}
+        </button>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          class="w-24 accent-green-500"
+          [value]="spotifyVolume()"
+          (input)="onMusicVolumeInput(+$any($event.target).value)"
+          aria-label="Music volume"
+        />
+      </span>
+    </div>
+  }
+
+  @if (lastError()) {
+    <div
+      class="rounded border border-red-700 bg-red-950/40 px-3 py-2 text-sm text-red-200"
+    >
+      {{ lastError() }}
+    </div>
+  }
+
+  @if (editing(); as seq) {
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <label class="flex flex-col gap-1 text-sm md:col-span-2">
+        <span class="text-zinc-400">Name</span>
+        <input
+          type="text"
+          class="rounded border border-zinc-700 bg-zinc-950 px-2 py-1 focus:border-emerald-500 focus:outline-none"
+          [value]="seq.name"
+          (input)="onNameChange($any($event.target).value)"
+        />
+      </label>
+      <label class="flex flex-col gap-1 text-sm">
+        <span class="text-zinc-400">Duration (ms)</span>
+        <input
+          type="number"
+          min="100"
+          step="100"
+          class="rounded border border-zinc-700 bg-zinc-950 px-2 py-1 focus:border-emerald-500 focus:outline-none"
+          [value]="seq.duration_ms"
+          (change)="onDurationChange(+$any($event.target).value)"
+        />
+      </label>
+    </div>
+
+    <div class="flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-400">
+      <span>
+        @if (editMode()) {
+          Click empty area to add a clip · drag to move · drag right edge to resize
+        } @else {
+          Click <span class="font-medium text-zinc-200">Edit</span> to add clips · drag clips to move/resize anytime
+        }
+      </span>
+      <span class="flex items-center gap-3">
+        <label class="flex items-center gap-1">
+          <span class="text-zinc-500">Height</span>
+          <input
+            type="range"
+            min="64"
+            max="320"
+            step="8"
+            class="accent-emerald-500"
+            [value]="trackHeightPx()"
+            (input)="trackHeightPx.set(+$any($event.target).value)"
+          />
+        </label>
+        <label class="flex items-center gap-1">
+          <span class="text-zinc-500">Zoom</span>
+          <input
+            type="range"
+            min="1"
+            max="10"
+            step="0.5"
+            class="accent-emerald-500"
+            [value]="zoomX()"
+            (input)="zoomX.set(+$any($event.target).value)"
+          />
+          <span class="font-mono">{{ zoomX().toFixed(1) }}×</span>
+        </label>
+        <span class="font-mono">
+          {{ playheadMs() ?? 0 }} / {{ seq.duration_ms }} ms
+        </span>
+      </span>
+    </div>
+
+    <div class="flex items-center gap-2 text-xs text-zinc-400">
+      <span class="font-medium text-zinc-200">Play range</span>
+      @if (rangeActive()) {
+        <span class="font-mono">
+          {{ rangeStartMs() }} → {{ rangeEndMs() }} ms
+        </span>
+        <button
+          type="button"
+          class="rounded bg-zinc-700 px-2 py-0.5 font-medium text-white hover:bg-zinc-600"
+          (click)="clearRange()"
+        >
+          Clear
+        </button>
+      } @else {
+        <span>Click the bar below or drag to set a loop region for editing</span>
+        <button
+          type="button"
+          class="rounded bg-zinc-700 px-2 py-0.5 font-medium text-white hover:bg-zinc-600"
+          (click)="setRange()"
+        >
+          Seed range
+        </button>
+      }
+    </div>
+
+    <div class="track-scroll">
+      <div
+        class="range-bar"
+        [style.width.%]="zoomX() * 100"
+        (click)="onRangeBarClick($event)"
+      >
+        @if (rangeActive()) {
+          <div
+            class="range-band"
+            data-range-handle="band"
+            [style.left.%]="rangeStartPct()"
+            [style.width.%]="rangeWidthPct()"
+            (pointerdown)="onRangePointerDown($event, 'range-band')"
+          ></div>
+          <div
+            class="range-handle range-handle-start"
+            data-range-handle="start"
+            [style.left.%]="rangeStartPct()"
+            (pointerdown)="onRangePointerDown($event, 'range-start')"
+            title="Loop start"
+          ></div>
+          <div
+            class="range-handle range-handle-end"
+            data-range-handle="end"
+            [style.left.%]="rangeEndPct()"
+            (pointerdown)="onRangePointerDown($event, 'range-end')"
+            title="Loop end"
+          ></div>
+        }
+      </div>
+
+      <div
+        #track
+        class="track rounded border border-zinc-700 bg-zinc-950"
+        [class.edit-mode]="editMode()"
+        [style.height.px]="trackHeightPx()"
+        [style.width.%]="zoomX() * 100"
+        (click)="onTrackClick($event)"
+      >
+        <div class="ruler"></div>
+        @for (clip of clips(); track clip.id) {
+          <div
+            class="clip"
+            [class.selected]="selectedClipId() === clip.id"
+            [class.has-pattern]="!!clip.pattern && clip.pattern.length > 0"
+            [style.left.%]="clipLeftPct(clip)"
+            [style.width.%]="clipWidthPct(clip)"
+            [style.background]="clipColorCss(clip)"
+            [attr.data-clip]="clip.id"
+            (pointerdown)="onClipPointerDown($event, clip.id, 'move')"
+            (click)="selectClip(clip.id, $event)"
+          >
+            <span class="clip-label">{{ clip.kind }}{{ (clip.pattern?.length ?? 0) > 0 ? ' ·px' : '' }}</span>
+            <div
+              class="resize-handle"
+              (pointerdown)="onClipPointerDown($event, clip.id, 'resize-end')"
+            ></div>
+          </div>
+        }
+        @if (isPlayingThis()) {
+          <div class="playhead" [style.left.%]="playheadPct()"></div>
+        }
+      </div>
+    </div>
+
+    @if (selectedClip(); as clip) {
+      <div
+        class="grid grid-cols-2 gap-3 rounded border border-zinc-800 bg-zinc-950 p-3 text-sm md:grid-cols-5"
+      >
+        <label class="flex flex-col gap-1">
+          <span class="text-zinc-400">Effect</span>
+          <select
+            class="rounded border border-zinc-700 bg-zinc-900 px-2 py-1 capitalize"
+            [value]="clip.kind"
+            (change)="onClipFieldChange('kind', $any($event.target).value)"
+          >
+            @for (k of effectKinds; track k) {
+              <option [value]="k">{{ k }}</option>
+            }
+          </select>
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="text-zinc-400">Start (ms)</span>
+          <input
+            type="number"
+            min="0"
+            step="50"
+            class="rounded border border-zinc-700 bg-zinc-900 px-2 py-1"
+            [value]="clip.start_ms"
+            (change)="onClipFieldChange('start_ms', +$any($event.target).value)"
+          />
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="text-zinc-400">Duration (ms)</span>
+          <input
+            type="number"
+            min="50"
+            step="50"
+            class="rounded border border-zinc-700 bg-zinc-900 px-2 py-1"
+            [value]="clip.duration_ms"
+            (change)="onClipFieldChange('duration_ms', +$any($event.target).value)"
+          />
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="text-zinc-400">Color</span>
+          <input
+            type="color"
+            class="h-9 w-full cursor-pointer rounded border border-zinc-700 bg-zinc-900"
+            [value]="selectedColorHex()"
+            (input)="onClipColorHex($any($event.target).value)"
+          />
+        </label>
+        <div class="flex items-end">
+          <button
+            type="button"
+            class="w-full rounded bg-red-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-600"
+            (click)="deleteSelectedClip()"
+          >
+            Remove clip
+          </button>
+        </div>
+      </div>
+
+      <div class="rounded border border-zinc-800 bg-zinc-950 p-3 text-sm">
+        <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span class="font-medium text-zinc-200">Per-LED pattern</span>
+            <span class="text-xs text-zinc-500">
+              {{ pixelCount() }} LEDs · click a cell to paint with the clip color · right-click to turn off
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            @if (hasPattern()) {
+              <button
+                type="button"
+                class="rounded px-2 py-1 text-xs font-medium text-white"
+                [class.bg-zinc-700]="!eraseMode()"
+                [class.hover:bg-zinc-600]="!eraseMode()"
+                [class.bg-amber-600]="eraseMode()"
+                [class.hover:bg-amber-500]="eraseMode()"
+                (click)="toggleEraseMode()"
+                [attr.aria-pressed]="eraseMode()"
+                title="When on, clicking a cell turns that LED off"
+              >
+                {{ eraseMode() ? 'Erase: on' : 'Erase: off' }}
+              </button>
+              <button
+                type="button"
+                class="rounded bg-zinc-700 px-2 py-1 text-xs font-medium text-white hover:bg-zinc-600"
+                (click)="fillPattern()"
+              >
+                Fill with color
+              </button>
+              <button
+                type="button"
+                class="rounded bg-zinc-700 px-2 py-1 text-xs font-medium text-white hover:bg-zinc-600"
+                (click)="disableAllPixels()"
+                title="Turn every LED off for this clip"
+              >
+                All off
+              </button>
+              <button
+                type="button"
+                class="rounded bg-zinc-700 px-2 py-1 text-xs font-medium text-white hover:bg-zinc-600"
+                (click)="clearPattern()"
+              >
+                Use effect instead
+              </button>
+            } @else {
+              <button
+                type="button"
+                class="rounded bg-emerald-600 px-2 py-1 text-xs font-medium text-white hover:bg-emerald-500"
+                (click)="enablePattern()"
+              >
+                Override LEDs
+              </button>
+            }
+          </div>
+        </div>
+
+        @if (selectedPatternView(); as pixels) {
+          <div class="pixel-grid">
+            @for (px of pixels; track $index) {
+              <button
+                type="button"
+                class="pixel-cell"
+                [class.pixel-off]="isPixelOff(px)"
+                [style.background]="pixelColorCss(px)"
+                [attr.aria-label]="'LED ' + $index + (isPixelOff(px) ? ' (off)' : '')"
+                (click)="paintPixel($index)"
+                (contextmenu)="disablePixel($event, $index)"
+                title="Click: paint · Right-click: turn off"
+              ></button>
+            }
+          </div>
+        } @else {
+          <p class="text-xs text-zinc-500">
+            This clip uses its <span class="font-medium">{{ clip.kind }}</span>
+            effect. Click <span class="font-medium text-zinc-200">Override LEDs</span>
+            to paint individual pixels instead.
+          </p>
+        }
+      </div>
+    }
+  } @else {
+    <div class="rounded border border-dashed border-zinc-700 bg-zinc-950 p-6 text-center text-sm text-zinc-400">
+      No sequence selected. Choose one above or click <span class="font-medium text-zinc-200">New</span>.
+    </div>
+  }
+</section>

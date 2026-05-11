@@ -12,8 +12,9 @@ import {
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 
-import { AudioService, AudioTrack } from './audio.service';
-import { LxButton } from './ui-components/button/lx-button';
+import { AudioService } from '../services/audio.service';
+import { AudioTrack } from '../models/audio.models';
+import { LxButton } from '../ui-components/button/lx-button';
 
 @Component({
   selector: 'app-audio-panel',

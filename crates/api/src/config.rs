@@ -24,6 +24,49 @@ pub struct Config {
     /// Directory holding uploaded audio files + analysis. Defaults to `./audio`.
     #[serde(default = "default_audio_dir")]
     pub audio_dir: PathBuf,
+    /// Spotify integration settings (SPOTIFY_PLAN.md).
+    #[serde(default)]
+    pub spotify: SpotifyConfig,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct SpotifyConfig {
+    #[serde(default = "default_spotify_redirect_uri")]
+    pub redirect_uri: String,
+    #[serde(default = "default_spotify_cache_dir")]
+    pub cache_dir: PathBuf,
+    #[serde(default = "default_spotify_token_path")]
+    pub token_path: PathBuf,
+    /// Origin (scheme + host + port) to redirect the browser back to after
+    /// the OAuth callback. Set to e.g. `http://localhost:4200` so the dev
+    /// UI receives the `?spotify=ok` query. When `None`, a relative URL
+    /// (`/?spotify=ok`) is used — appropriate when the API also serves the
+    /// SPA.
+    #[serde(default)]
+    pub ui_origin: Option<String>,
+}
+
+impl Default for SpotifyConfig {
+    fn default() -> Self {
+        Self {
+            redirect_uri: default_spotify_redirect_uri(),
+            cache_dir: default_spotify_cache_dir(),
+            token_path: default_spotify_token_path(),
+            ui_origin: None,
+        }
+    }
+}
+
+fn default_spotify_redirect_uri() -> String {
+    "http://127.0.0.1:3000/api/spotify/auth/callback".into()
+}
+
+fn default_spotify_cache_dir() -> PathBuf {
+    PathBuf::from("spotify-cache")
+}
+
+fn default_spotify_token_path() -> PathBuf {
+    PathBuf::from("spotify-token.bin")
 }
 
 fn default_shows_dir() -> PathBuf {

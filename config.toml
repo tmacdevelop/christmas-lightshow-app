@@ -21,3 +21,14 @@ layouts_dir = "layouts"
 
 # Directory holding uploaded audio files + analysis (Phase 4 music sync).
 audio_dir = "audio"
+
+# Spotify integration (SPOTIFY_PLAN.md). Client ID is read from the
+# SPOTIFY_CLIENT_ID env var (.env), but redirect URI / paths live here.
+[spotify]
+redirect_uri = "http://127.0.0.1:3000/api/spotify/auth/callback"
+cache_dir = "spotify-cache"
+token_path = "spotify-token.bin"
+# Where to send the browser after the OAuth callback completes. Use the
+# Angular dev server during development; leave unset (or empty) when the
+# API itself serves the SPA.
+ui_origin = "http://localhost:4200"

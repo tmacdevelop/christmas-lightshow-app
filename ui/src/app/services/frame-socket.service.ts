@@ -1,10 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 
-/** Connection state for the frame stream. */
-export type ConnectionState = 'idle' | 'connecting' | 'open' | 'closed' | 'error';
-
-/** A decoded frame: one entry per pixel as `[r, g, b]`. */
-export type DecodedFrame = Uint8Array;
+export type { ConnectionState, DecodedFrame } from '../models/socket.models';
+import type { ConnectionState, DecodedFrame } from '../models/socket.models';
 
 interface FrameStats {
   framesPerSecond: number;

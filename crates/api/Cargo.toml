@@ -17,6 +17,7 @@ path = "src/main.rs"
 controller = { workspace = true }
 sequencer = { workspace = true }
 audio = { workspace = true }
+spotify = { workspace = true }
 
 tokio = { workspace = true }
 axum = { workspace = true, features = ["multipart"] }
@@ -31,3 +32,5 @@ tracing = { workspace = true }
 tracing-subscriber = { workspace = true }
 anyhow = { workspace = true }
 thiserror = { workspace = true }
+dotenvy = { workspace = true }
+url = { workspace = true }

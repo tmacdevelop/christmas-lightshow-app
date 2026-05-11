@@ -2,28 +2,9 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
-import { EffectKind, ShowStatus } from './show-control.service';
-
-export interface ClipColor {
-  r: number;
-  g: number;
-  b: number;
-}
-
-export interface Clip {
-  id: string;
-  start_ms: number;
-  duration_ms: number;
-  kind: EffectKind;
-  color: ClipColor;
-}
-
-export interface Sequence {
-  id: string;
-  name: string;
-  duration_ms: number;
-  clips: Clip[];
-}
+import type { ShowStatus } from '../models/show.models';
+export type { ClipColor, Clip, Sequence } from '../models/sequence.models';
+import type { Clip, Sequence } from '../models/sequence.models';
 
 const API_BASE = '/api';
 
@@ -92,6 +73,37 @@ export class SequenceService {
     return this.run(() =>
       firstValueFrom(
         this.http.post<ShowStatus>(`${API_BASE}/playback/stop`, {}),
+      ),
+    );
+  }
+
+  /**
+   * One-shot playhead seek. Engine resumes advancing from `positionMs`
+   * using its internal clock (does NOT lock the playhead). The currently-
+   * loaded sequence must already be playing.
+   */
+  async seek(positionMs: number): Promise<void> {
+    await this.run(() =>
+      firstValueFrom(
+        this.http.post<void>(`${API_BASE}/playback/seek`, {
+          position_ms: Math.max(0, Math.round(positionMs)),
+        }),
+      ),
+    );
+  }
+
+  /**
+   * Push an externally-driven playhead position (used by the Spotify Web
+   * Playback SDK, which calls this ~10 Hz to keep the engine locked to the
+   * track's playback position).
+   */
+  async sync(positionMs: number, playing = true): Promise<void> {
+    await this.run(() =>
+      firstValueFrom(
+        this.http.post<void>(`${API_BASE}/playback/sync`, {
+          position_ms: Math.max(0, Math.round(positionMs)),
+          playing,
+        }),
       ),
     );
   }

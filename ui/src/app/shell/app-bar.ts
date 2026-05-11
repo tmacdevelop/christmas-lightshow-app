@@ -7,7 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ShowControlService } from '../show-control.service';
+import { ShowControlService } from '../services/show-control.service';
 import { LxButton } from '../ui-components/button/lx-button';
 
 /**

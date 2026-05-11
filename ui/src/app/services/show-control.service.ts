@@ -2,44 +2,8 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
-export type EffectKind = 'solid' | 'fade' | 'chase' | 'rainbow';
-
-export type PlaybackMode = 'live' | 'sequence';
-
-export interface EffectInfo {
-  kind: EffectKind;
-  uses_color: boolean;
-}
-
-export interface ColorPayload {
-  r: number;
-  g: number;
-  b: number;
-  hex: string;
-}
-
-export interface PlaybackInfo {
-  mode: PlaybackMode;
-  sequence_id: string | null;
-  sequence_name: string | null;
-  position_ms: number;
-  duration_ms: number;
-  looping: boolean;
-}
-
-export interface ShowStatus {
-  playing: boolean;
-  brightness: number;
-  color: ColorPayload;
-  effect: EffectKind;
-  playback: PlaybackInfo;
-  active_layout_id: string | null;
-}
-
-export interface EffectsResponse {
-  available: EffectInfo[];
-  active: EffectKind;
-}
+export type { EffectKind, PlaybackMode, EffectInfo, ColorPayload, PlaybackInfo, ShowStatus, EffectsResponse } from '../models/show.models';
+import type { EffectKind, EffectInfo, ShowStatus, EffectsResponse } from '../models/show.models';
 
 const API_BASE = '/api';
 
