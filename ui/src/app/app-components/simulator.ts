@@ -13,18 +13,15 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { FrameSocketService } from './frame-socket.service';
-import { Layout, LayoutService } from './layout.service';
-import { ShowControlService } from './show-control.service';
+import { FrameSocketService } from '../services/frame-socket.service';
+import { LayoutService } from '../services/layout.service';
+import { ShowControlService } from '../services/show-control.service';
+import { Layout } from '../models/layout.models';
+import { SimulatorVariant } from '../models/simulator.models';
+
+export type { SimulatorVariant } from '../models/simulator.models';
 
 const DEFAULT_WS_URL = '/ws';
-const STATUS_POLL_MS = 1000;
-
-/**
- * Inputs for the popped-out window. Hides chrome (header / connection form)
- * and lets the canvas fill the entire viewport.
- */
-export type SimulatorVariant = 'embedded' | 'popout';
 
 @Component({
   selector: 'app-simulator',
@@ -84,7 +81,6 @@ export class SimulatorComponent implements AfterViewInit, OnDestroy {
 
   private latestFrame: Uint8Array | null = null;
   private rafHandle: number | null = null;
-  private statusPollHandle: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
     this.socket.onFrame((frame) => {
@@ -118,21 +114,11 @@ export class SimulatorComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.connect();
     this.startRenderLoop();
-    // Initial status fetch + lightweight poll so the simulator follows
-    // activate/deactivate without needing a websocket message.
-    void this.control.loadStatus();
-    this.statusPollHandle = setInterval(
-      () => this.control.loadStatus(),
-      STATUS_POLL_MS,
-    );
   }
 
   ngOnDestroy(): void {
     if (this.rafHandle !== null) {
       cancelAnimationFrame(this.rafHandle);
-    }
-    if (this.statusPollHandle) {
-      clearInterval(this.statusPollHandle);
     }
     this.socket.disconnect();
   }

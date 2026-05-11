@@ -175,6 +175,7 @@ mod tests {
             duration_ms: 500,
             kind: EffectKind::Solid,
             color: ClipColor { r: 1, g: 2, b: 3 },
+            pattern: None,
         });
         s
     }

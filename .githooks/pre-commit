@@ -39,6 +39,18 @@ if ! $run_rust && ! $run_ui; then
 fi
 
 if $run_rust; then
+  echo "pre-commit: cargo fmt --all (auto-fixing)"
+  cargo fmt --all
+  # Re-stage any Rust files that were already staged and may have been
+  # reformatted. Without this, `cargo fmt --check` below would fail on
+  # files the hook itself just fixed. We only re-add files that were
+  # already in the index so we never silently stage unrelated work.
+  rust_staged="$(echo "$staged" | grep -E '\.rs$|^Cargo\.(toml|lock)$|^rustfmt\.toml$' || true)"
+  if [ -n "$rust_staged" ]; then
+    # shellcheck disable=SC2086
+    git add -- $rust_staged
+  fi
+
   echo "pre-commit: cargo fmt --all -- --check"
   cargo fmt --all -- --check
 

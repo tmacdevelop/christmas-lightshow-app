@@ -1,15 +1,15 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-
-import { LxPanel } from '../ui/panel/lx-panel';
-import { LxSplitter } from '../ui/splitter/lx-splitter';
-import { LxTab, LxTabs } from '../ui/tabs/lx-tabs';
-
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { AppBarComponent } from './app-bar';
-import { AudioPanelComponent } from '../audio-panel';
-import { ControlPanelComponent } from '../control-panel';
-import { LayoutDesignerComponent } from '../layout-designer';
-import { SimulatorComponent } from '../simulator';
-import { TimelineComponent } from '../timeline';
+import { AudioPanelComponent } from '../app-components/audio-panel';
+import { ControlPanelComponent } from '../app-components/control-panel';
+import { LayoutDesignerComponent } from '../app-components/layout-designer';
+import { SimulatorComponent } from '../app-components/simulator';
+import { TimelineComponent } from '../app-components/timeline';
+import { LxPanel } from '../ui-components/panel/lx-panel';
+import { LxSplitter } from '../ui-components/splitter/lx-splitter';
+import { LxTab, LxTabs } from '../ui-components/tabs/lx-tabs';
+import { SpotifyPanelComponent } from '../app-components/spotify-panel';
+import { StatusSocketService } from '../services/status-socket.service';
 
 /**
  * Single-screen workspace shell (Option A).
@@ -39,6 +39,7 @@ import { TimelineComponent } from '../timeline';
     LxTab,
     LxTabs,
     SimulatorComponent,
+    SpotifyPanelComponent,
     TimelineComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -73,6 +74,11 @@ import { TimelineComponent } from '../timeline';
                   <app-audio-panel />
                 </div>
               </ng-template>
+              <ng-template lxTab label="Spotify">
+                <div class="h-full overflow-auto p-3">
+                  <app-spotify-panel />
+                </div>
+              </ng-template>
             </lx-tabs>
           </lx-panel>
         </div>
@@ -101,6 +107,10 @@ import { TimelineComponent } from '../timeline';
   `,
 })
 export class WorkspaceComponent {
+  // Injecting StatusSocketService here starts the WebSocket connection for the
+  // entire app lifetime — no component needs to poll /api/status anymore.
+  private readonly _statusSocket = inject(StatusSocketService);
+
   /** Initial stage height in px; user can drag the gutter to adjust. */
   protected stageSize = 520;
   protected controlWidth = 360;

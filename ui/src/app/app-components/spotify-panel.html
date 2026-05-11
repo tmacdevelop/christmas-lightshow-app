@@ -1,0 +1,371 @@
+<!-- Auth bar -->
+<div class="mb-3 flex items-center gap-2">
+  @if (!status().configured) {
+    <p class="text-xs text-amber-400">
+      Spotify is not configured. Set <code>SPOTIFY_CLIENT_ID</code> in
+      <code>.env</code> and restart the server.
+    </p>
+  } @else if (!status().authenticated) {
+    <button lx-button size="sm" (click)="login()">Login with Spotify</button>
+    <span class="text-xs text-zinc-500">
+      Premium account required for synced playback.
+    </span>
+  } @else {
+    <div class="flex items-center gap-2">
+      @if (avatarUrl()) {
+        <img
+          [src]="avatarUrl()"
+          alt=""
+          class="h-7 w-7 rounded-full object-cover"
+        />
+      }
+      <span class="text-sm text-zinc-200">
+        {{ status().user?.display_name ?? status().user?.id }}
+      </span>
+      @if (status().user?.product) {
+        <span
+          class="rounded bg-zinc-800 px-1.5 py-0.5 text-[10px] uppercase text-zinc-400"
+        >
+          {{ status().user?.product }}
+        </span>
+      }
+      <button lx-button size="sm" variant="ghost" (click)="logout()">
+        Logout
+      </button>
+    </div>
+  }
+</div>
+
+@if (lastError()) {
+  <p class="mb-3 rounded bg-red-900/40 px-3 py-2 text-xs text-red-300">
+    {{ lastError() }}
+  </p>
+}
+@if (justAuthed()) {
+  <p class="mb-3 rounded bg-green-900/40 px-3 py-2 text-xs text-green-300">
+    Spotify connected.
+  </p>
+}
+
+@if (status().authenticated) {
+  <lx-tabs (activeChange)="onTabChange($event)">
+    <!-- ================= Search tab ================= -->
+    <ng-template lxTab label="Search">
+      <div class="flex h-full min-h-0 flex-col gap-2 p-2">
+        <form class="flex gap-2" (submit)="onSearch($event)">
+          <input
+            type="search"
+            placeholder="Search tracks…"
+            class="flex-1 rounded border border-zinc-700 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-100 outline-none focus:border-green-500"
+            [(ngModel)]="query"
+            name="q"
+          />
+          <button lx-button size="sm" type="submit" [disabled]="busy()">
+            Search
+          </button>
+        </form>
+
+        @if (results().length === 0 && !busy() && hasSearched()) {
+          <p class="text-center text-xs text-zinc-500">No matches.</p>
+        }
+
+        <ul class="flex min-h-0 flex-1 flex-col gap-1.5 overflow-auto">
+          @for (t of results(); track t.id) {
+            <ng-container
+              [ngTemplateOutlet]="trackRow"
+              [ngTemplateOutletContext]="{ p: toPlayable(t) }"
+            />
+          }
+        </ul>
+      </div>
+    </ng-template>
+
+    <!-- ================= Liked Songs tab ================= -->
+    <ng-template lxTab label="Liked Songs">
+      <div class="flex h-full min-h-0 flex-col gap-2 p-2">
+        @if (!libraryTracksLoaded() && busy()) {
+          <p class="text-center text-xs text-zinc-500">Loading…</p>
+        } @else if (libraryTracks().length === 0 && libraryTracksLoaded()) {
+          <p class="text-center text-xs text-zinc-500">
+            No liked songs yet. Like a song in Spotify and refresh.
+          </p>
+        } @else {
+          <p class="text-[11px] text-zinc-500">
+            {{ libraryTracks().length }} of
+            {{ libraryTracksTotal() | number }} liked songs
+          </p>
+          <ul class="flex min-h-0 flex-1 flex-col gap-1.5 overflow-auto">
+            @for (t of libraryTracks(); track t.id) {
+              <ng-container
+                [ngTemplateOutlet]="trackRow"
+                [ngTemplateOutletContext]="{ p: toPlayable(t) }"
+              />
+            }
+          </ul>
+          @if (libraryTracks().length < libraryTracksTotal()) {
+            <button
+              lx-button
+              size="sm"
+              variant="ghost"
+              [disabled]="busy()"
+              (click)="loadMoreLibraryTracks()"
+            >
+              Load more
+            </button>
+          }
+        }
+      </div>
+    </ng-template>
+
+    <!-- ================= Albums tab ================= -->
+    <ng-template lxTab label="Albums">
+      <div class="flex h-full min-h-0 flex-col gap-2 p-2">
+        @if (selectedAlbum(); as album) {
+          <!-- Album detail view -->
+          <div class="flex items-start gap-3">
+            <button
+              lx-button
+              size="sm"
+              variant="ghost"
+              class="flex-none"
+              (click)="closeAlbum()"
+              aria-label="Back to albums"
+            >
+              ← Albums
+            </button>
+            <div class="flex min-w-0 flex-1 items-center gap-3">
+              @if (albumImage(album); as img) {
+                <img
+                  [src]="img"
+                  alt=""
+                  class="h-16 w-16 flex-none rounded object-cover"
+                />
+              }
+              <div class="min-w-0">
+                <p class="truncate text-sm font-semibold text-zinc-100">
+                  {{ album.name }}
+                </p>
+                <p class="truncate text-xs text-zinc-400">
+                  {{ artistNames(album) }}
+                </p>
+                <p class="text-[10px] text-zinc-500">
+                  {{ album.release_date }} · {{ album.total_tracks }} tracks
+                </p>
+              </div>
+            </div>
+          </div>
+
+          @if (selectedAlbumLoading()) {
+            <p class="text-center text-xs text-zinc-500">Loading tracks…</p>
+          } @else {
+            <ul class="flex min-h-0 flex-1 flex-col gap-1.5 overflow-auto">
+              @for (t of selectedAlbumTracks(); track t.id) {
+                <ng-container
+                  [ngTemplateOutlet]="trackRow"
+                  [ngTemplateOutletContext]="{
+                    p: toPlayableFromAlbumTrack(t, album)
+                  }"
+                />
+              }
+            </ul>
+          }
+        } @else {
+          @if (!libraryAlbumsLoaded() && busy()) {
+            <p class="text-center text-xs text-zinc-500">Loading albums…</p>
+          } @else if (
+            libraryAlbums().length === 0 && libraryAlbumsLoaded()
+          ) {
+            <p class="text-center text-xs text-zinc-500">
+              No saved albums. Save an album in Spotify and refresh.
+            </p>
+          } @else {
+            <p class="text-[11px] text-zinc-500">
+              {{ libraryAlbums().length }} of
+              {{ libraryAlbumsTotal() | number }} saved albums
+            </p>
+            <div
+              class="grid min-h-0 flex-1 grid-cols-[repeat(auto-fill,minmax(110px,1fr))] gap-2 overflow-auto"
+            >
+              @for (a of libraryAlbums(); track a.id) {
+                <button
+                  type="button"
+                  class="group flex flex-col gap-1 rounded border border-transparent p-1 text-left hover:border-zinc-700 hover:bg-zinc-900/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/40"
+                  (click)="openAlbum(a)"
+                >
+                  @if (albumImage(a); as img) {
+                    <img
+                      [src]="img"
+                      alt=""
+                      class="aspect-square w-full rounded object-cover"
+                    />
+                  } @else {
+                    <div class="aspect-square w-full rounded bg-zinc-800"></div>
+                  }
+                  <span
+                    class="truncate text-xs font-medium text-zinc-100 group-hover:text-emerald-200"
+                  >
+                    {{ a.name }}
+                  </span>
+                  <span class="truncate text-[10px] text-zinc-500">
+                    {{ artistNames(a) }}
+                  </span>
+                </button>
+              }
+            </div>
+            @if (libraryAlbums().length < libraryAlbumsTotal()) {
+              <button
+                lx-button
+                size="sm"
+                variant="ghost"
+                [disabled]="busy()"
+                (click)="loadMoreLibraryAlbums()"
+              >
+                Load more
+              </button>
+            }
+          }
+        }
+      </div>
+    </ng-template>
+  </lx-tabs>
+
+  @if (lastBuild(); as built) {
+    <p class="mt-3 px-2 text-xs text-zinc-400">
+      Generated <strong>{{ built.clip_count | number }}</strong> clips
+      ({{ formatDuration(built.duration_ms) }}). Sequence id
+      <code class="text-zinc-300">{{ built.sequence_id }}</code> is now
+      playing on the simulator.
+    </p>
+  }
+
+  <!-- Now-playing transport (Web Playback SDK) -->
+  @if (snapshot(); as snap) {
+    <div
+      class="mt-2 mx-2 flex flex-col gap-2 rounded border border-green-700/40 bg-green-900/15 p-2"
+    >
+      <div class="flex items-center gap-3">
+        <div class="min-w-0 flex-1">
+          <p class="truncate text-sm font-medium text-zinc-100">
+            {{ snap.track_name || '—' }}
+          </p>
+          <p class="text-[10px] text-zinc-400">
+            {{ formatDuration(snap.position_ms) }} /
+            {{ formatDuration(snap.duration_ms) }}
+            @if (playerReady()) {
+              · synced
+            } @else {
+              · connecting…
+            }
+          </p>
+        </div>
+        <button
+          lx-button
+          size="sm"
+          variant="ghost"
+          (click)="restart()"
+          title="Restart from beginning"
+        >
+          ⏮
+        </button>
+        <button lx-button size="sm" variant="ghost" (click)="togglePlay()">
+          @if (snap.paused) { ▶ Play } @else { ⏸ Pause }
+        </button>
+        <button
+          lx-button
+          size="sm"
+          variant="ghost"
+          (click)="stopPlayback()"
+          title="Pause playback"
+        >
+          ⏹ Stop
+        </button>
+      </div>
+      <input
+        type="range"
+        min="0"
+        [max]="snap.duration_ms || 1"
+        step="500"
+        class="w-full accent-green-500"
+        [value]="snap.position_ms"
+        (input)="onSeekInput(+$any($event.target).value)"
+        aria-label="Seek track position"
+      />
+      <div class="flex items-center gap-2 text-xs text-zinc-400">
+        <button
+          type="button"
+          class="rounded px-2 py-0.5 font-medium"
+          [class.bg-amber-600]="muted()"
+          [class.text-white]="muted()"
+          [class.bg-zinc-800]="!muted()"
+          [class.text-zinc-300]="!muted()"
+          (click)="toggleMute()"
+          [attr.aria-pressed]="muted()"
+          title="Mute Spotify audio so you can hear yourself think while editing"
+        >
+          {{ muted() ? '🔇 Muted' : '🔊 Mute' }}
+        </button>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          class="flex-1 accent-green-500"
+          [value]="volume()"
+          (input)="onVolumeInput(+$any($event.target).value)"
+          aria-label="Volume"
+        />
+        <span class="w-10 text-right font-mono">
+          {{ (volume() * 100) | number:'1.0-0' }}%
+        </span>
+      </div>
+    </div>
+  }
+}
+
+<!-- Shared row template — used by Search, Liked, and album detail. -->
+<ng-template #trackRow let-p="p">
+  <li
+    class="flex items-center gap-3 rounded border border-zinc-800 bg-zinc-900/60 p-2"
+  >
+    @if (p.cover) {
+      <img
+        [src]="p.cover"
+        alt=""
+        class="h-12 w-12 flex-none rounded object-cover"
+      />
+    } @else {
+      <div class="h-12 w-12 flex-none rounded bg-zinc-800"></div>
+    }
+    <div class="min-w-0 flex-1">
+      <p class="truncate text-sm font-medium text-zinc-100">{{ p.name }}</p>
+      <p class="truncate text-xs text-zinc-400">{{ artistNames(p) }}</p>
+      <p class="text-[10px] text-zinc-500">
+        {{ formatDuration(p.duration_ms) }}
+        @if (p.meta) {
+          · {{ p.meta }}
+        }
+      </p>
+    </div>
+    <button
+      lx-button
+      size="sm"
+      variant="ghost"
+      (click)="playOnly(p)"
+      title="Play this track in Spotify without generating a sequence"
+    >
+      ▶ Play
+    </button>
+    <button
+      lx-button
+      size="sm"
+      [disabled]="generatingId() === p.id"
+      (click)="generateAndPlay(p)"
+    >
+      @if (generatingId() === p.id) {
+        Generating…
+      } @else {
+        Sync Lights
+      }
+    </button>
+  </li>
+</ng-template>

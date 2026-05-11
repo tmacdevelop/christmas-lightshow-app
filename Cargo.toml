@@ -5,6 +5,7 @@ members = [
     "crates/sequencer",
     "crates/audio",
     "crates/api",
+    "crates/spotify",
 ]
 
 [workspace.package]
@@ -42,7 +43,18 @@ thiserror = "2"
 symphonia = { version = "0.5", features = ["mp3", "aac", "ogg", "flac", "wav"] }
 rustfft = "6"
 
+# Spotify integration (Phase: SPOTIFY_PLAN.md)
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json"] }
+sha2 = "0.10"
+base64 = "0.22"
+rand = "0.8"
+aes-gcm = "0.10"
+chrono = { version = "0.4", default-features = false, features = ["clock", "serde"] }
+url = "2"
+dotenvy = "0.15"
+
 # Workspace-internal crates
 controller = { path = "crates/controller" }
 sequencer = { path = "crates/sequencer" }
 audio = { path = "crates/audio" }
+spotify = { path = "crates/spotify" }

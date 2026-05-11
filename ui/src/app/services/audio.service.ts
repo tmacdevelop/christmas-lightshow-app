@@ -2,23 +2,11 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
-import { Sequence } from './sequence.service';
+import type { Sequence } from '../models/sequence.models';
+export type { AudioAnalysis, AudioTrack } from '../models/audio.models';
+import type { AudioTrack } from '../models/audio.models';
 
 const API_BASE = '/api';
-
-export interface AudioAnalysis {
-  duration_ms: number;
-  sample_rate: number;
-  bpm: number;
-  beats_ms: number[];
-  rms: number;
-}
-
-export interface AudioTrack {
-  id: string;
-  filename: string;
-  analysis: AudioAnalysis;
-}
 
 /**
  * REST client for the Phase 4 audio upload + beat analysis + sequence

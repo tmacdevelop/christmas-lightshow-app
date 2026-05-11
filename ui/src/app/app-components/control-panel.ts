@@ -8,7 +8,9 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { EffectKind, ShowControlService } from './show-control.service';
+import { ShowControlService } from '../services/show-control.service';
+import { MicBeatService } from '../services/mic-beat.service';
+import { EffectKind } from '../models/show.models';
 
 @Component({
   selector: 'app-control-panel',
@@ -20,6 +22,7 @@ import { EffectKind, ShowControlService } from './show-control.service';
 })
 export class ControlPanelComponent implements OnInit {
   private readonly control = inject(ShowControlService);
+  protected readonly mic = inject(MicBeatService);
 
   protected readonly status = this.control.status;
   protected readonly effects = this.control.effects;
@@ -70,5 +73,21 @@ export class ControlPanelComponent implements OnInit {
 
   protected async commitBrightness(): Promise<void> {
     await this.control.setBrightness(this.brightnessDraft());
+  }
+
+  protected async toggleMic(): Promise<void> {
+    if (this.mic.running()) {
+      await this.mic.stop();
+    } else {
+      try {
+        await this.mic.start();
+      } catch {
+        /* lastError set inside the service */
+      }
+    }
+  }
+
+  protected onThresholdInput(value: number): void {
+    this.mic.threshold.set(value);
   }
 }

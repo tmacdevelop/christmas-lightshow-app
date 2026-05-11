@@ -2,41 +2,9 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
-import { ShowStatus } from './show-control.service';
-
-export interface Point {
-  x: number;
-  y: number;
-}
-
-/**
- * Discriminated union of geometries. Phase 3 only ships `strip` (a straight
- * line of evenly spaced pixels), but new variants slot in as additional
- * `type` values.
- */
-export type Geometry = StripGeometry;
-
-export interface StripGeometry {
-  type: 'strip';
-  start: Point;
-  end: Point;
-}
-
-export interface Prop {
-  id: string;
-  name: string;
-  pixel_offset: number;
-  pixel_count: number;
-  geometry: Geometry;
-}
-
-export interface Layout {
-  id: string;
-  name: string;
-  width: number;
-  height: number;
-  props: Prop[];
-}
+import type { ShowStatus } from '../models/show.models';
+export type { Point, Geometry, StripGeometry, Prop, Layout } from '../models/layout.models';
+import type { Layout } from '../models/layout.models';
 
 const API_BASE = '/api';
 

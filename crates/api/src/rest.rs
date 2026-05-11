@@ -22,6 +22,9 @@
 //! - `POST   /api/sequences/:id/play` — start playing a sequence;
 //!   body `{"loop": bool}` (default `false`).
 //! - `POST   /api/playback/stop`     — stop sequence playback (returns to live).
+//! - `POST   /api/playback/sync`     — push an external playhead position
+//!   (`{ "position_ms": u64, "playing"?: bool }`). Used by the Spotify Web
+//!   Playback SDK so the lights track the streamed audio frame-accurately.
 //!
 //! Layout designer (Phase 3):
 //!
@@ -53,6 +56,7 @@ use axum::{
 use controller::Rgb;
 use sequencer::{Clip, ClipColor, EffectKind, Layout, PlaybackInfo, Sequence};
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 
 use crate::{audio_store::AudioTrack, state::AppState};
 
@@ -65,6 +69,7 @@ pub fn router() -> Router<AppState> {
         .route("/effect", post(set_effect))
         .route("/color", post(set_color))
         .route("/brightness", post(set_brightness))
+        .route("/reactive/pulse", post(reactive_pulse))
         .route("/sequences", get(list_sequences))
         .route(
             "/sequences/{id}",
@@ -72,6 +77,9 @@ pub fn router() -> Router<AppState> {
         )
         .route("/sequences/{id}/play", post(play_sequence))
         .route("/playback/stop", post(stop_playback))
+        .route("/playback/sync", post(sync_playback))
+        .route("/playback/sync/clear", post(clear_playback_sync))
+        .route("/playback/seek", post(seek_playback))
         .route("/layouts", get(list_layouts))
         .route(
             "/layouts/{id}",
@@ -108,6 +116,7 @@ struct StatusResponse {
     effect: &'static str,
     playback: PlaybackInfo,
     active_layout_id: Option<String>,
+    pixel_count: usize,
 }
 
 #[derive(Serialize)]
@@ -178,16 +187,51 @@ async fn get_status(State(state): State<AppState>) -> Json<StatusResponse> {
         effect: kind.name(),
         playback,
         active_layout_id: active_layout_id(&state),
+        pixel_count: state.renderer.pixel_count(),
     })
+}
+
+/// Serialise the current show state to a JSON string. Used by both the REST
+/// handler and the WebSocket status broadcaster.
+pub fn build_status_json(state: &AppState) -> String {
+    let snap = with_show(state, |s| {
+        (
+            s.playing(),
+            s.brightness(),
+            s.color(),
+            s.kind(),
+            s.playback_info(),
+        )
+    });
+    let (playing, brightness, color, kind, playback) = snap;
+    let resp = StatusResponse {
+        playing,
+        brightness,
+        color: color.into(),
+        effect: kind.name(),
+        playback,
+        active_layout_id: active_layout_id(state),
+        pixel_count: state.renderer.pixel_count(),
+    };
+    serde_json::to_string(&resp).expect("StatusResponse serialisation is infallible")
+}
+
+/// Broadcast the current status to all connected `/ws/status` clients.
+/// Errors are silently ignored (no clients connected is the normal case).
+fn broadcast_status(state: &AppState) {
+    let json = build_status_json(state);
+    let _ = state.status_tx.send(Arc::new(json));
 }
 
 async fn start(State(state): State<AppState>) -> Json<StatusResponse> {
     with_show(&state, |s| s.set_playing(true));
+    broadcast_status(&state);
     get_status(State(state)).await
 }
 
 async fn stop(State(state): State<AppState>) -> Json<StatusResponse> {
     with_show(&state, |s| s.set_playing(false));
+    broadcast_status(&state);
     get_status(State(state)).await
 }
 
@@ -196,6 +240,7 @@ async fn set_effect(
     Json(body): Json<EffectRequest>,
 ) -> Json<StatusResponse> {
     with_show(&state, |s| s.set_kind(body.kind));
+    broadcast_status(&state);
     get_status(State(state)).await
 }
 
@@ -210,6 +255,7 @@ async fn set_color(
         }
     };
     with_show(&state, |s| s.set_color(color));
+    broadcast_status(&state);
     Ok(get_status(State(state)).await)
 }
 
@@ -224,7 +270,53 @@ async fn set_brightness(
         ));
     }
     with_show(&state, |s| s.set_brightness(body.value));
+    broadcast_status(&state);
     Ok(get_status(State(state)).await)
+}
+
+#[derive(Deserialize)]
+struct PulseRequest {
+    /// Pulse strength in [0, 1]. Clamped server-side.
+    value: f32,
+    /// Optional explicit color. If omitted, the effect rotates through
+    /// its built-in palette.
+    #[serde(default)]
+    color: Option<PulseColor>,
+}
+
+#[derive(Deserialize)]
+#[serde(untagged)]
+enum PulseColor {
+    Rgb { r: u8, g: u8, b: u8 },
+    Hex { hex: String },
+}
+
+/// `POST /api/reactive/pulse` — push a single beat pulse into the live
+/// reactive effect. Auto-switches the show into `EffectKind::Reactive`
+/// if it isn't already, so the first pulse "just works".
+async fn reactive_pulse(
+    State(state): State<AppState>,
+    Json(body): Json<PulseRequest>,
+) -> Result<StatusCode, (StatusCode, String)> {
+    if !body.value.is_finite() {
+        return Err((
+            StatusCode::BAD_REQUEST,
+            "pulse value must be a finite number".into(),
+        ));
+    }
+    let color = match body.color {
+        None => None,
+        Some(PulseColor::Rgb { r, g, b }) => Some(Rgb(r, g, b)),
+        Some(PulseColor::Hex { hex }) => Some(
+            parse_hex(&hex)
+                .ok_or((StatusCode::BAD_REQUEST, format!("invalid hex color: {hex}")))?,
+        ),
+    };
+    with_show(&state, |s| s.reactive_pulse(body.value, color));
+    // Don't broadcast on every pulse — they arrive at ~5-10 Hz and the
+    // UI's status panel doesn't need to redraw that often. The frame WS
+    // already carries the resulting light state.
+    Ok(StatusCode::NO_CONTENT)
 }
 
 fn with_show<R>(state: &AppState, f: impl FnOnce(&mut sequencer::ShowState) -> R) -> R {
@@ -321,12 +413,87 @@ async fn play_sequence(
         .ok_or((StatusCode::NOT_FOUND, format!("no sequence with id '{id}'")))?;
     let looping = body.map(|Json(b)| b.looping).unwrap_or(false);
     with_show(&state, |s| s.play_sequence(seq, looping));
+    broadcast_status(&state);
     Ok(get_status(State(state)).await)
 }
 
 async fn stop_playback(State(state): State<AppState>) -> Json<StatusResponse> {
     with_show(&state, |s| s.stop_sequence());
+    broadcast_status(&state);
     get_status(State(state)).await
+}
+
+#[derive(Deserialize)]
+struct SyncBody {
+    position_ms: u64,
+    /// Optional. When `Some(false)` the engine pauses (emits black) until the
+    /// next sync tick with `playing = true` resumes it. Defaults to leaving
+    /// the play state untouched.
+    #[serde(default)]
+    playing: Option<bool>,
+}
+
+/// Push an external playhead position into the show engine. The body is
+/// `{ "position_ms": u64, "playing"?: bool }`. Returns 204 on success;
+/// 409 if no sequence is loaded (so the UI knows to call `/sequences/:id/play`
+/// first).
+async fn sync_playback(
+    State(state): State<AppState>,
+    Json(body): Json<SyncBody>,
+) -> Result<StatusCode, (StatusCode, String)> {
+    let mut guard = match state.show.lock() {
+        Ok(g) => g,
+        Err(p) => p.into_inner(),
+    };
+    if guard.mode() != sequencer::PlaybackMode::Sequence {
+        return Err((
+            StatusCode::CONFLICT,
+            "no sequence is currently loaded—call POST /api/sequences/:id/play first".into(),
+        ));
+    }
+    guard.set_external_playhead(body.position_ms);
+    if let Some(p) = body.playing {
+        guard.set_playing(p);
+    }
+    drop(guard);
+    broadcast_status(&state);
+    Ok(StatusCode::NO_CONTENT)
+}
+
+/// Stop honoring an external playhead. Internal-clock playback resumes from
+/// the last synced position.
+async fn clear_playback_sync(State(state): State<AppState>) -> Json<StatusResponse> {
+    with_show(&state, |s| s.clear_external_playhead());
+    broadcast_status(&state);
+    get_status(State(state)).await
+}
+
+#[derive(Deserialize)]
+struct SeekBody {
+    position_ms: u64,
+}
+
+/// One-shot playhead seek. Unlike `/playback/sync`, this does NOT lock the
+/// playhead — the engine continues advancing from `position_ms` on its
+/// internal clock. Used by the timeline range-loop watcher.
+async fn seek_playback(
+    State(state): State<AppState>,
+    Json(body): Json<SeekBody>,
+) -> Result<StatusCode, (StatusCode, String)> {
+    let mut guard = match state.show.lock() {
+        Ok(g) => g,
+        Err(p) => p.into_inner(),
+    };
+    if guard.mode() != sequencer::PlaybackMode::Sequence {
+        return Err((
+            StatusCode::CONFLICT,
+            "no sequence is currently loaded—call POST /api/sequences/:id/play first".into(),
+        ));
+    }
+    guard.seek_to(body.position_ms);
+    drop(guard);
+    broadcast_status(&state);
+    Ok(StatusCode::NO_CONTENT)
 }
 
 // ---------- Phase 3: layouts ----------
@@ -406,11 +573,13 @@ async fn activate_layout(
         return Err((StatusCode::NOT_FOUND, format!("no layout with id '{id}'")));
     }
     set_active_layout_id(&state, Some(id));
+    broadcast_status(&state);
     Ok(get_status(State(state)).await)
 }
 
 async fn deactivate_layout(State(state): State<AppState>) -> Json<StatusResponse> {
     set_active_layout_id(&state, None);
+    broadcast_status(&state);
     get_status(State(state)).await
 }
 
@@ -602,6 +771,7 @@ async fn generate_sequence(
                 g: color.1,
                 b: color.2,
             },
+            pattern: None,
         });
     }
 

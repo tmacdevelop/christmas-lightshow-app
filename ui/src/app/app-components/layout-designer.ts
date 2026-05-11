@@ -13,20 +13,14 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import {
-  Layout,
-  LayoutService,
-  Point,
-  Prop,
-  StripGeometry,
-} from './layout.service';
-import { ShowControlService } from './show-control.service';
+import { LayoutService } from '../services/layout.service';
+import { Layout, Point, Prop, StripGeometry } from '../models/layout.models';
+import { ShowControlService } from '../services/show-control.service';
 
 const DEFAULT_WIDTH = 800;
 const DEFAULT_HEIGHT = 500;
 const DEFAULT_PIXEL_COUNT = 30;
 const HANDLE_RADIUS = 6;
-const POLL_INTERVAL_MS = 1000;
 
 type DragKind = 'start' | 'end' | 'move';
 
@@ -101,7 +95,6 @@ export class LayoutDesignerComponent implements OnInit, OnDestroy {
   });
 
   private drag: DragState | null = null;
-  private pollHandle: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
     // Refresh the library whenever the active layout changes (e.g. another
@@ -114,17 +107,9 @@ export class LayoutDesignerComponent implements OnInit, OnDestroy {
   async ngOnInit(): Promise<void> {
     await this.layouts.list();
     await this.control.loadStatus();
-    this.pollHandle = setInterval(
-      () => this.control.loadStatus(),
-      POLL_INTERVAL_MS,
-    );
   }
 
-  ngOnDestroy(): void {
-    if (this.pollHandle) {
-      clearInterval(this.pollHandle);
-    }
-  }
+  ngOnDestroy(): void {}
 
   // ---------- library actions ----------
 

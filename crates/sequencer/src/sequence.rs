@@ -54,6 +54,14 @@ pub struct Clip {
     pub kind: EffectKind,
     /// Color seed for color-aware effects.
     pub color: ClipColor,
+    /// Optional per-pixel pattern. When present, the engine paints these
+    /// colors pixel-by-pixel for the entire clip duration, ignoring `kind`.
+    /// If the pattern is shorter than the strip it tiles; if longer, the
+    /// extra entries are ignored. `None` means "use the effect" (legacy
+    /// behavior). Serializes as `pattern` and is omitted when absent so
+    /// existing sequences stay byte-identical on disk.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub pattern: Option<Vec<ClipColor>>,
 }
 
 impl Clip {
@@ -162,6 +170,7 @@ mod tests {
             duration_ms: dur,
             kind: EffectKind::Solid,
             color: ClipColor { r: 255, g: 0, b: 0 },
+            pattern: None,
         }
     }
 
