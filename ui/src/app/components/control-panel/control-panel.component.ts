@@ -8,17 +8,17 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { ShowControlService } from '../services/show-control.service';
-import { MicBeatService } from '../services/mic-beat.service';
-import { EffectKind } from '../models/show.models';
+import { ShowControlService } from '../../services/show-control.service';
+import { MicBeatService } from '../../services/mic-beat.service';
+import { EffectKind } from '../../models/show.models';
 
 @Component({
   selector: 'app-control-panel',
   standalone: true,
   imports: [FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './control-panel.html',
-  styleUrl: './control-panel.css',
+  templateUrl: './control-panel.component.html',
+  styleUrl: './control-panel.component.css',
 })
 export class ControlPanelComponent implements OnInit {
   private readonly control = inject(ShowControlService);

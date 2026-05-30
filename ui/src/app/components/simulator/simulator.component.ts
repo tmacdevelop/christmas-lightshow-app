@@ -13,13 +13,13 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { FrameSocketService } from '../services/frame-socket.service';
-import { LayoutService } from '../services/layout.service';
-import { ShowControlService } from '../services/show-control.service';
-import { Layout } from '../models/layout.models';
-import { SimulatorVariant } from '../models/simulator.models';
+import { FrameSocketService } from '../../services/frame-socket.service';
+import { LayoutService } from '../../services/layout.service';
+import { ShowControlService } from '../../services/show-control.service';
+import { Layout } from '../../models/layout.models';
+import { SimulatorVariant } from '../../models/simulator.models';
 
-export type { SimulatorVariant } from '../models/simulator.models';
+export type { SimulatorVariant } from '../../models/simulator.models';
 
 const DEFAULT_WS_URL = '/ws';
 
@@ -28,8 +28,8 @@ const DEFAULT_WS_URL = '/ws';
   standalone: true,
   imports: [FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './simulator.html',
-  styleUrl: './simulator.css',
+  templateUrl: './simulator.component.html',
+  styleUrl: './simulator.component.css',
 })
 export class SimulatorComponent implements AfterViewInit, OnDestroy {
   private readonly socket = inject(FrameSocketService);

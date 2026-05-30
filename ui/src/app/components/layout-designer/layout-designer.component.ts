@@ -13,9 +13,9 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { LayoutService } from '../services/layout.service';
-import { Layout, Point, Prop, StripGeometry } from '../models/layout.models';
-import { ShowControlService } from '../services/show-control.service';
+import { LayoutService } from '../../services/layout.service';
+import { Layout, Point, Prop, StripGeometry } from '../../models/layout.models';
+import { ShowControlService } from '../../services/show-control.service';
 
 const DEFAULT_WIDTH = 800;
 const DEFAULT_HEIGHT = 500;
@@ -55,8 +55,8 @@ function ensureStrip(prop: Prop): StripGeometry {
   standalone: true,
   imports: [FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './layout-designer.html',
-  styleUrl: './layout-designer.css',
+  templateUrl: './layout-designer.component.html',
+  styleUrl: './layout-designer.component.css',
 })
 export class LayoutDesignerComponent implements OnInit, OnDestroy {
   protected readonly layouts = inject(LayoutService);

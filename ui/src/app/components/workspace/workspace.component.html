@@ -1,0 +1,63 @@
+<app-app-bar />
+
+<div
+  class="flex min-h-0 flex-1 flex-col"
+  [style.min-height.px]="minWorkspaceHeight"
+>
+  <lx-splitter
+    orientation="vertical"
+    [(size)]="stageSize"
+    [min]="240"
+  >
+    <!-- Stage: tabs hosting Simulator / Designer -->
+    <div lx-splitter-pane="first" class="h-full p-2">
+      <lx-panel [scroll]="false">
+        <lx-tabs [(active)]="activeTab">
+          <ng-template lxTab label="Simulator">
+            <div class="h-full p-3">
+              <app-simulator class="block h-full" />
+            </div>
+          </ng-template>
+          <ng-template lxTab label="Designer">
+            <div class="h-full">
+              <app-layout-designer class="block h-full" />
+            </div>
+          </ng-template>
+          <ng-template lxTab label="Music">
+            <div class="h-full overflow-auto p-3">
+              <app-audio-panel />
+            </div>
+          </ng-template>
+          <ng-template lxTab label="Spotify">
+            <div class="h-full min-h-0 p-3">
+              <app-spotify-panel class="block h-full min-h-0" />
+            </div>
+          </ng-template>
+        </lx-tabs>
+      </lx-panel>
+    </div>
+
+    <!-- Bottom dock: live control + timeline, side by side -->
+    <div lx-splitter-pane="second" class="h-full p-2 pt-0">
+      <lx-splitter [(size)]="controlWidth" [min]="280" [max]="520">
+        <div lx-splitter-pane="first" class="h-full pr-1">
+          <lx-panel heading="Live Control">
+            <div class="p-3">
+              <app-control-panel />
+            </div>
+          </lx-panel>
+        </div>
+        <div lx-splitter-pane="second" class="h-full pl-1">
+          <lx-panel heading="Timeline" [scroll]="false">
+            <div class="h-full overflow-auto p-3">
+              <app-timeline />
+            </div>
+          </lx-panel>
+        </div>
+      </lx-splitter>
+    </div>
+  </lx-splitter>
+</div>
+
+<!-- Persistent transport bar — control music from any tab. -->
+<app-music-console />

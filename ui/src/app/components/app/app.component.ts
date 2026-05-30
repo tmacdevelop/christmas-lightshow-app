@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
-import { SimulatorComponent } from './app-components/simulator';
-import { WorkspaceComponent } from './shell/workspace';
+import { SimulatorComponent } from '../simulator/simulator.component';
+import { WorkspaceComponent } from '../workspace/workspace.component';
 
 /**
  * The window can be opened in two views:
@@ -20,21 +20,8 @@ function readView(): 'workspace' | 'simulator' {
   standalone: true,
   imports: [WorkspaceComponent, SimulatorComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    @if (view() === 'simulator') {
-      <app-simulator variant="popout" class="block h-screen w-screen bg-black" />
-    } @else {
-      <app-workspace />
-    }
-  `,
-  styles: [
-    `
-      :host {
-        display: block;
-        height: 100%;
-      }
-    `,
-  ],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css',
 })
 export class App {
   protected readonly view = signal(readView());
