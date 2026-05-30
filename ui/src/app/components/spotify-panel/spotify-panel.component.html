@@ -270,17 +270,40 @@
         }
       </p>
     </div>
-    <button
-      lx-button
-      size="sm"
-      [disabled]="generatingId() === p.id"
-      (click)="generateAndPlay(p); $event.stopPropagation()"
-    >
-      @if (generatingId() === p.id) {
-        Generating…
-      } @else {
-        Sync Lights
-      }
-    </button>
+    <div class="flex flex-none items-center gap-1.5">
+      <button
+        lx-button
+        size="sm"
+        variant="secondary"
+        [disabled]="loadingId() === p.id || generatingId() === p.id"
+        (click)="loadIntoPlayer(p); $event.stopPropagation()"
+        [title]="
+          isLoaded(p)
+            ? 'Already loaded — press Play in the footer'
+            : 'Load into the player (does not auto-play)'
+        "
+      >
+        @if (loadingId() === p.id) {
+          Loading…
+        } @else if (isLoaded(p)) {
+          ✓ Loaded
+        } @else {
+          Load
+        }
+      </button>
+      <button
+        lx-button
+        size="sm"
+        [disabled]="generatingId() === p.id || loadingId() === p.id"
+        (click)="generateAndPlay(p); $event.stopPropagation()"
+        title="Generate sequence and start playing immediately"
+      >
+        @if (generatingId() === p.id) {
+          Generating…
+        } @else {
+          ▶ Sync Lights
+        }
+      </button>
+    </div>
   </li>
 </ng-template>

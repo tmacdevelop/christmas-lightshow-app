@@ -158,11 +158,136 @@ Total: **~$80–$150** for a starter indoor show.
   including 2D effects driven across stacked strips
 
 ### Phase 4 — Music Synchronization (Weeks 8–10)
-- Audio decode (`symphonia`), real-time FFT (`rustfft`), beat detection
-- Synchronized audio output + light frame scheduling
-- Angular: waveform visualization, auto-generate effects from beats
-- Export show as MP4 video (ffmpeg)
-- ✅ **Deliverable:** Upload an MP3 → auto-generated light show in the simulator
+
+#### Phase 4a — Foundations ✅ (done)
+- Audio decode (`symphonia`), local onset/beat detection (spectral flux)
+- Auto-generate beat-synced sequences from uploaded files
+- Spotify integration: PKCE auth, search/library, Web Playback SDK,
+  Deezer-ISRC BPM fallback (since `/v1/audio-analysis` is deprecated)
+- `MicBeatService` — browser mic → onset pulses → `Reactive` effect
+- Unified light-show transport (`SequencerTransportService` + footer
+  `MusicConsoleComponent`) so any tab can drive playback
+
+#### Phase 4b — Unified Now-Playing Pipeline ⏳ (next up)
+
+**Problem.** The transport currently only plays content that has a saved
+`Sequence`. A song highlighted in the Spotify panel without a generated
+sequence has no path to the engine; the Music tab is upload-only; and the
+mic source posts pulses out-of-band, invisible to the transport. The
+result: when Deezer has no BPM (e.g. Feliz Navidad — TCM Hardstyle Version,
+ISRC `QZTAX2260898`) sequence generation fails and the user dead-ends.
+
+**Goal.** One pipeline, three input sources, one transport bar.
+
+```
+ ┌──────────────┐  ┌────────────────┐  ┌──────────────┐
+ │ Music tab    │  │ Spotify tab    │  │ Live Input   │
+ │ (uploads)    │  │ (search/lib)   │  │ (mic / line) │
+ └──────┬───────┘  └────────┬───────┘  └──────┬───────┘
+        │  Load into player │                 │
+        ▼                   ▼                 ▼
+ ┌──────────────────────────────────────────────────────┐
+ │            NowPlayingService (UI singleton)          │
+ │  source · metadata · sequenceId? · transport state   │
+ └────────────────────────┬─────────────────────────────┘
+                          │
+       ┌──────────────────┼────────────────────┐
+       ▼                  ▼                    ▼
+ ┌───────────┐    ┌───────────────┐    ┌───────────────┐
+ │ <audio>   │    │ Spotify SDK   │    │ MicBeatSvc    │
+ │ + seq     │    │ + seq (opt.)  │    │ + Reactive    │
+ └───────────┘    └───────────────┘    └───────────────┘
+```
+
+`MusicSource` is a discriminated union:
+
+```ts
+type MusicSource =
+  | { kind: 'upload',  trackId: string, sequenceId: string }
+  | { kind: 'spotify', trackId: string, uri: string,
+                       sequenceId: string | null, bpm?: number }
+  | { kind: 'live',    inputId: 'mic' | 'loopback' };  // reactive only
+```
+
+##### Tasks
+
+- **Frontend services**
+  - New `NowPlayingService` — single source of truth for *what's loaded*
+    and *what's playing*. Owns the `MusicSource`, transport methods,
+    seek/volume, and the "active" sequence id.
+  - `SequencerTransportService` becomes sequence-only (range loop, current
+    editing copy) and is *driven by* `NowPlayingService`.
+  - `MusicConsoleComponent` reads exclusively from `NowPlayingService`;
+    it no longer mixes `SpotifyService` + transport state directly.
+  - `MicBeatService` becomes a first-class source (`{ kind: 'live' }`):
+    starting the source toggles `Reactive` mode and the mic onset stream;
+    stopping reverts to whatever was loaded before.
+
+- **"Load into player" UX**
+  - Spotify panel rows: `[ Load ]` button → `NowPlayingService.load({
+    kind:'spotify', ... })`. If a sequence already exists, attach it; if
+    not, load with `sequenceId: null` (lights run in `Reactive` mode while
+    the song plays).
+  - Music (upload) tab rows: `[ Load ]` button → upload source.
+  - New "Live Input" tile → `live` source.
+  - Highlighted (selected) ≠ loaded. Loading mirrors the track into the
+    footer's now-playing block; playback always operates on the *loaded*
+    source.
+
+- **No-BPM fallback (Feliz Navidad case)**
+  - Backend: `POST /api/spotify/track/:id/sequence` accepts
+    `{ bpm?: f32 }`. When supplied, build the synthetic analysis via
+    `synthesize_analysis(track, DeezerHit { bpm, .. })` directly,
+    skipping Deezer. When omitted, current Deezer path runs.
+  - Backend: typed error `NoBpm` returned when Deezer 404s and no manual
+    BPM was supplied (so the UI can branch).
+  - Frontend: when `NoBpm` comes back, surface an inline dialog with a
+    **tap-tempo widget** + numeric BPM input + "Try again" button.
+    Successful retry saves a real `Sequence` and the track loads into the
+    player as usual.
+  - Backup path: a Spotify track can also be loaded with `sequenceId:
+    null` and played reactively (mic-driven) while the song streams via
+    SDK — useful when the user just wants lights bouncing off the room.
+
+- **"Record to upload" — saving music from speaker input**
+  - Music tab gets a **"Record from mic"** button. Captures N seconds of
+    audio in the browser (`MediaRecorder`) and posts the WAV blob to the
+    existing `/api/audio/upload` route — which already runs symphonia
+    decode + onset detection + sequence generation. No new backend
+    endpoint required.
+  - Result: a live performance / room mic / line-in capture becomes a
+    saved upload with a generated sequence, immediately loadable into
+    the unified player. This is what unlocks "save music data from
+    speaker input."
+
+- **Music tab structure**
+  - Sub-tabs: **Uploads · Spotify (mirror) · Live Input** so all sources
+    are reachable from one tab. The dedicated Spotify stage tab can stay
+    as the "library/search" surface; the Music tab is the *player-centric*
+    view.
+
+##### Backend changes (small)
+- `POST /api/spotify/track/:id/sequence`: optional `{ bpm }` body; typed
+  `NoBpm` error variant.
+- `synthesize_analysis`: already accepts a `DeezerHit`; expose a thin
+  `synthesize_analysis_from_bpm(track, bpm)` helper.
+
+##### Out of scope for 4b (still in Phase 4)
+- MP4/video export (kept as a stretch goal).
+- Real-time FFT-driven effects (Reactive mode is onset-only today; full
+  FFT-bin → effect routing comes after the unified pipeline lands).
+
+#### Phase 4c — Polish & exports
+- Waveform overlay synced to the loaded source (uploads have it; show the
+  same canvas for Spotify using a precomputed envelope from analysis).
+- Real-time FFT-driven effects (frequency bins → per-pixel intensity).
+- Export show as MP4 video (ffmpeg).
+
+- ✅ **Deliverable (4b):** Any song from Uploads, Spotify, or the live mic
+  loads into one player; the footer transport drives lights + audio
+  together; the Feliz Navidad / "no Deezer BPM" case resolves via
+  manual BPM or reactive playback.
+- ✅ **Deliverable (4c):** MP4 export and FFT-driven effects.
 
 ### Phase 4.5 — 🎉 Hardware Day (Apartment)
 - Wire up Pi + WS2812 strip + level shifter + cap (see safety notes below)

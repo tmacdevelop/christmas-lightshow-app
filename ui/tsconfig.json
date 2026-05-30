@@ -14,10 +14,9 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "preserve",
-    "baseUrl": "./",
     "paths": {
-      "@ui": ["src/app/ui/index.ts"],
-      "@ui/*": ["src/app/ui/*"]
+      "@ui": ["./src/app/ui/index.ts"],
+      "@ui/*": ["./src/app/ui/*"]
     }
   },
   "angularCompilerOptions": {

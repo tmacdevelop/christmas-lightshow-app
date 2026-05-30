@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 
 import { AudioService } from '../../services/audio.service';
+import { NowPlayingService } from '../../services/now-playing.service';
 import { AudioTrack } from '../../models/audio.models';
 import { LxButton } from '../../ui-components/button/lx-button';
 
@@ -25,12 +26,15 @@ import { LxButton } from '../../ui-components/button/lx-button';
 })
 export class AudioPanelComponent implements OnInit, OnDestroy {
   protected readonly audioService = inject(AudioService);
+  private readonly nowPlaying = inject(NowPlayingService);
 
   protected readonly tracks = this.audioService.tracks;
   protected readonly lastError = this.audioService.lastError;
+  protected readonly loadedSource = this.nowPlaying.loaded;
 
   protected readonly uploading = signal(false);
   protected readonly generating = signal(false);
+  protected readonly loadingId = signal<string | null>(null);
   protected readonly dragging = signal(false);
   protected readonly playing = signal(false);
   protected readonly selectedId = signal<string | null>(null);
@@ -187,6 +191,23 @@ export class AudioPanelComponent implements OnInit, OnDestroy {
     } finally {
       this.generating.set(false);
     }
+  }
+
+  /** Load an upload into the unified player (no auto-play). */
+  async loadIntoPlayer(track: AudioTrack): Promise<void> {
+    this.loadingId.set(track.id);
+    try {
+      await this.nowPlaying.loadUpload(track);
+    } catch {
+      // error surfaced via lastError
+    } finally {
+      this.loadingId.set(null);
+    }
+  }
+
+  protected isLoaded(track: AudioTrack): boolean {
+    const ld = this.loadedSource();
+    return ld?.source.kind === 'upload' && ld.source.trackId === track.id;
   }
 
   async deleteTrack(id: string): Promise<void> {

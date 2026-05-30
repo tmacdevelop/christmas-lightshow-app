@@ -11,13 +11,17 @@ import {
   viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DecimalPipe } from '@angular/common';
 
 import { SequenceService } from '../../services/sequence.service';
 import { Clip, ClipColor, Sequence } from '../../models/sequence.models';
 import { ShowControlService } from '../../services/show-control.service';
 import { EffectKind } from '../../models/show.models';
+import { SequencerTransportService } from '../../services/sequencer-transport.service';
 import { SpotifyService } from '../../services/spotify.service';
+import {
+  LxConfirmModal,
+  LxModalController,
+} from '../../ui-components';
 
 const DEFAULT_DURATION_MS = 10_000;
 const DEFAULT_CLIP_DURATION_MS = 1_000;
@@ -69,7 +73,7 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
 @Component({
   selector: 'app-timeline',
   standalone: true,
-  imports: [FormsModule, DecimalPipe],
+  imports: [FormsModule, LxConfirmModal],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './timeline.component.html',
   styleUrl: './timeline.component.css',
@@ -77,10 +81,19 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
 export class TimelineComponent implements OnInit {
   private readonly sequences = inject(SequenceService);
   private readonly control = inject(ShowControlService);
+  private readonly transport = inject(SequencerTransportService);
   private readonly spotify = inject(SpotifyService);
 
   protected readonly track =
     viewChild.required<ElementRef<HTMLDivElement>>('track');
+  /** Optional ref to the live playhead `<div>` so a rAF loop can move it
+   * directly without triggering Angular change detection. */
+  protected readonly playheadEl =
+    viewChild<ElementRef<HTMLDivElement>>('playheadEl');
+  /** Optional ref to the playhead-ms text node, also driven by rAF so it
+   * doesn't share CD ticks with the zoom/height range inputs. */
+  protected readonly playheadMsLabel =
+    viewChild<ElementRef<HTMLSpanElement>>('playheadMsLabel');
 
   protected readonly library = this.sequences.sequences;
   protected readonly lastError = this.sequences.lastError;
@@ -88,7 +101,11 @@ export class TimelineComponent implements OnInit {
 
   protected readonly editing = signal<Sequence | null>(null);
   protected readonly selectedClipId = signal<string | null>(null);
-  protected readonly looping = signal<boolean>(true);
+  /** Confirm-delete modal controller. Owns open state + payload. */
+  protected readonly deletePrompt = new LxModalController<{
+    id: string;
+    name: string;
+  }>();
 
   /** Vertical track height in px (zoom). */
   protected readonly trackHeightPx = signal<number>(96);
@@ -103,14 +120,11 @@ export class TimelineComponent implements OnInit {
    */
   protected readonly editMode = signal<boolean>(false);
 
-  /** Playback range — when non-null, Play loops between these markers. */
-  protected readonly rangeStartMs = signal<number | null>(null);
-  protected readonly rangeEndMs = signal<number | null>(null);
-  protected readonly rangeActive = computed(
-    () => this.rangeStartMs() !== null && this.rangeEndMs() !== null,
-  );
-  /** Guard: avoid issuing parallel sync requests while one is in flight. */
-  private rangeResyncing = false;
+  /** Playback range — when non-null, Play loops between these markers.
+   * Owned by the transport service so the footer transport stays in sync. */
+  protected readonly rangeStartMs = this.transport.rangeStartMs;
+  protected readonly rangeEndMs = this.transport.rangeEndMs;
+  protected readonly rangeActive = this.transport.rangeActive;
 
   protected readonly effectKinds: EffectKind[] = [
     'solid',
@@ -136,63 +150,67 @@ export class TimelineComponent implements OnInit {
   });
 
   /** Live playhead position in ms from the show status (sequence mode only). */
-  protected readonly playheadMs = computed(() => {
-    const pb = this.status()?.playback;
-    if (!pb || pb.mode !== 'sequence') return null;
-    if (pb.sequence_id !== this.editingId()) return null;
-    return pb.position_ms;
-  });
-  protected readonly isPlayingThis = computed(() => this.playheadMs() !== null);
-
-  /**
-   * If the currently-loaded sequence was generated from a Spotify track, its
-   * id is `spotify-{trackId}`. Surface the URI so the timeline can drive
-   * Spotify playback in sync with editing.
-   */
-  protected readonly spotifyTrackUri = computed<string | null>(() => {
-    const id = this.editingId();
-    if (!id) return null;
-    const match = /^spotify-([A-Za-z0-9]+)$/.exec(id);
-    return match ? `spotify:track:${match[1]}` : null;
-  });
-  protected readonly spotifySnapshot = this.spotify.playerSnapshot;
-  protected readonly spotifyMuted = this.spotify.muted;
-  protected readonly spotifyVolume = this.spotify.volume;
-  protected readonly spotifyAuthed = computed(
-    () => this.spotify.status().authenticated,
-  );
+  protected readonly playheadMs = this.transport.playheadMs;
+  protected readonly isPlayingThis = this.transport.isPlaying;
+  private rafHandle: number | null = null;
 
   private dragState: DragState | null = null;
 
   constructor() {
-    // Range-loop watcher: when a play range is active and the engine's
-    // playhead crosses the end marker, rewind it to the start. Runs whenever
-    // the status signal updates (ticker pushes ~10/sec while playing).
+    // Keep the transport service's working copy mirrored to the editor so the
+    // footer Play/Stop transport always acts on the latest edits.
     effect(() => {
-      const pos = this.playheadMs();
-      const start = this.rangeStartMs();
-      const end = this.rangeEndMs();
-      if (pos === null || start === null || end === null) return;
-      if (end <= start) return;
-      if (pos < end) return;
-      if (this.rangeResyncing) return;
-      this.rangeResyncing = true;
-      // Seek both Spotify (so the song wraps too) and the engine. When
-      // Spotify is the master, its 10Hz sync push would otherwise drag the
-      // engine playhead right back past the end marker; seeking the player
-      // first ensures the next push lands inside the range.
-      const snap = this.spotify.playerSnapshot();
-      const spotifyActive = snap !== null && !snap.paused;
-      const tasks: Promise<unknown>[] = [
-        this.sequences.seek(start).catch(() => undefined),
-      ];
-      if (spotifyActive) {
-        tasks.push(this.spotify.seek(start).catch(() => undefined));
-      }
-      Promise.all(tasks).finally(() => {
-        this.rangeResyncing = false;
-      });
+      this.transport.setCurrent(this.editing());
     });
+
+    // Smoothly animate the playhead `<div>` directly via rAF so the red
+    // line traverses without retriggering Angular change detection (which
+    // would re-evaluate every binding in the timeline and cause the zoom/
+    // height range inputs to flicker).
+    //
+    // Position source priority:
+    //   1. Spotify SDK reference clock when the sequence is Spotify-backed
+    //      and a player snapshot is available — this is the same source
+    //      the music console seek bar uses, so both stay in lock-step and
+    //      we avoid reconciling two clocks (engine + Spotify).
+    //   2. Otherwise, dead-reckon from the engine status anchor.
+    effect(() => {
+      const el = this.playheadEl()?.nativeElement;
+      const label = this.playheadMsLabel()?.nativeElement;
+      const isPlaying = this.isPlayingThis();
+      const anchor = this.transport.playheadAnchor();
+      const dur = this.durationMs();
+      const useSpotify =
+        this.transport.spotifyTrackUri() !== null &&
+        this.spotify.playerSnapshot() !== null;
+      this.cancelPlayheadRaf();
+      if (!isPlaying || dur <= 0) return;
+      const tick = () => {
+        let pos: number;
+        if (useSpotify) {
+          pos = this.spotify.interpolatedPosition();
+        } else if (anchor) {
+          const elapsed = anchor.playing
+            ? Math.max(0, performance.now() - anchor.clockMs)
+            : 0;
+          pos = anchor.posMs + elapsed;
+        } else {
+          pos = 0;
+        }
+        pos = Math.max(0, Math.min(pos, dur));
+        if (el) el.style.left = `${(pos / dur) * 100}%`;
+        if (label) label.textContent = String(Math.floor(pos));
+        this.rafHandle = requestAnimationFrame(tick);
+      };
+      this.rafHandle = requestAnimationFrame(tick);
+    });
+  }
+
+  private cancelPlayheadRaf(): void {
+    if (this.rafHandle !== null) {
+      cancelAnimationFrame(this.rafHandle);
+      this.rafHandle = null;
+    }
   }
 
   async ngOnInit(): Promise<void> {
@@ -244,79 +262,32 @@ export class TimelineComponent implements OnInit {
   protected async deleteSequence(): Promise<void> {
     const seq = this.editing();
     if (!seq) return;
-    if (!confirm(`Delete sequence "${seq.name}"?`)) return;
-    try {
-      await this.sequences.delete(seq.id);
-      this.editing.set(null);
-      this.selectedClipId.set(null);
-    } catch {
-      // ignored
-    }
+    this.deletePrompt.show({ id: seq.id, name: seq.name });
   }
 
-  protected async play(): Promise<void> {
+  /** Open the confirm-delete modal for the loaded sequence. */
+  protected requestDeleteSequence(): void {
     const seq = this.editing();
     if (!seq) return;
-    // Persist before playing so server has the latest version.
-    try {
-      await this.sequences.save(structuredClone(seq));
-      // If a loop range is set, force `loop=true` regardless of the Loop
-      // checkbox so the range watcher can keep rewinding the playhead.
-      const looping = this.rangeActive() ? true : this.looping();
-      await this.sequences.play(seq.id, looping);
-      // Snap the engine to the range start so playback begins inside the
-      // selected window. Without this, playback always starts at 0.
-      const start = this.rangeStartMs();
-      if (start !== null) {
-        await this.sequences.seek(start);
-      }
-      // Drive Spotify alongside the sequencer when this sequence was built
-      // from a Spotify track. Music + lights need to start together so the
-      // editor can author per-LED patterns against the actual song.
-      const uri = this.spotifyTrackUri();
-      if (uri && this.spotifyAuthed()) {
-        try {
-          const offset = start ?? 0;
-          // If the same track is already loaded in the player, just seek
-          // and resume — calling play with `position_ms` re-issues a fresh
-          // playback request which can momentarily report position 0 and
-          // tug the engine playhead with it.
-          const snap = this.spotify.playerSnapshot();
-          const trackId = uri.replace('spotify:track:', '');
-          if (snap && snap.trackId === trackId) {
-            await this.spotify.seek(offset);
-            await this.spotify.resume();
-          } else {
-            // Fresh start: pass position_ms in the play body so the very
-            // first state event reports the desired offset (avoids the
-            // 10Hz sync loop snapping the engine back to 0).
-            await this.spotify.ensurePlaying(uri, offset);
-          }
-        } catch {
-          // SpotifyService surfaces details in lastError; the sequencer
-          // continues even if Spotify can't start.
-        }
-      }
-      await this.control.loadStatus();
-    } catch {
-      // ignored
-    }
+    this.deletePrompt.show({ id: seq.id, name: seq.name });
   }
 
-  protected async stop(): Promise<void> {
+  protected cancelDelete(): void {
+    this.deletePrompt.hide();
+  }
+
+  /** Confirm-delete handler: perform the destructive call. */
+  protected async confirmDelete(): Promise<void> {
+    const target = this.deletePrompt.data();
+    if (!target) return;
+    this.deletePrompt.hide();
     try {
-      // First leave sequence mode, then pause the live show so the engine
-      // doesn't immediately resume the default live effect. Without the
-      // second call, "stop" felt like "pause the song" because the live
-      // effect kept rendering underneath.
-      await this.sequences.stop();
-      await this.control.stop();
-      // Pause the Spotify track too so a single Stop button stops
-      // everything the user can hear and see.
-      if (this.spotifyTrackUri() && this.spotifyAuthed()) {
-        await this.spotify.pause().catch(() => undefined);
+      await this.sequences.delete(target.id);
+      const current = this.editing();
+      if (current && current.id === target.id) {
+        this.editing.set(null);
+        this.selectedClipId.set(null);
       }
-      await this.control.loadStatus();
     } catch {
       // ignored
     }
@@ -326,59 +297,7 @@ export class TimelineComponent implements OnInit {
     this.editMode.update((v) => !v);
   }
 
-  // ---------- Spotify music transport ----------
-
-  /**
-   * Begin playback of the Spotify track associated with the loaded
-   * sequence. Used while editing to hear the music so per-LED patterns
-   * can be authored against the actual song.
-   */
-  protected async playMusic(): Promise<void> {
-    const uri = this.spotifyTrackUri();
-    if (!uri) return;
-    try {
-      await this.spotify.ensurePlaying(uri);
-      // If a play range is active, jump Spotify to the start so the song
-      // and the lights stay aligned with what's being edited.
-      const start = this.rangeStartMs();
-      if (start !== null) {
-        await this.spotify.seek(start);
-      }
-    } catch {
-      // SpotifyService surfaces details in lastError.
-    }
-  }
-
-  protected async pauseMusic(): Promise<void> {
-    await this.spotify.pause().catch(() => undefined);
-  }
-
-  protected async restartMusic(): Promise<void> {
-    await this.spotify.restart().catch(() => undefined);
-  }
-
-  protected async toggleMusicMute(): Promise<void> {
-    await this.spotify.toggleMute().catch(() => undefined);
-  }
-
-  protected onMusicVolumeInput(value: number): void {
-    this.spotify.setVolume(value).catch(() => undefined);
-  }
-
   // ---------- range controls ----------
-
-  protected clearRange(): void {
-    this.rangeStartMs.set(null);
-    this.rangeEndMs.set(null);
-  }
-
-  /** Initialize a range to roughly the visible centre third of the sequence. */
-  protected setRange(): void {
-    const dur = this.durationMs();
-    if (dur <= 0) return;
-    this.rangeStartMs.set(Math.round(dur * 0.33));
-    this.rangeEndMs.set(Math.round(dur * 0.66));
-  }
 
   protected rangeStartPct(): number {
     const dur = this.durationMs();
@@ -402,6 +321,7 @@ export class TimelineComponent implements OnInit {
     // Clicking on the bar (not a handle) creates a range or moves the closer
     // endpoint to the click position.
     if (this.dragState) return;
+    if (!this.editMode()) return;
     const target = event.target as HTMLElement;
     if (target.dataset['rangeHandle']) return;
     const ms = this.clientXToMs(event.clientX);
@@ -429,18 +349,15 @@ export class TimelineComponent implements OnInit {
 
   protected onNameChange(value: string): void {
     const seq = this.editing();
-    if (!seq) return;
+    if (!seq || !this.editMode()) return;
     this.editing.set({ ...seq, name: value });
   }
 
   protected onDurationChange(value: number): void {
     const seq = this.editing();
-    if (!seq || !Number.isFinite(value) || value <= 0) return;
+    if (!seq || !this.editMode()) return;
+    if (!Number.isFinite(value) || value <= 0) return;
     this.editing.set({ ...seq, duration_ms: Math.round(value) });
-  }
-
-  protected onLoopingChange(value: boolean): void {
-    this.looping.set(value);
   }
 
   /** Click on empty timeline space → add a clip (only while edit mode is on). */
@@ -484,7 +401,7 @@ export class TimelineComponent implements OnInit {
   protected deleteSelectedClip(): void {
     const seq = this.editing();
     const id = this.selectedClipId();
-    if (!seq || !id) return;
+    if (!seq || !id || !this.editMode()) return;
     this.editing.set({
       ...seq,
       clips: seq.clips.filter((c) => c.id !== id),
@@ -498,7 +415,7 @@ export class TimelineComponent implements OnInit {
   ): void {
     const seq = this.editing();
     const id = this.selectedClipId();
-    if (!seq || !id) return;
+    if (!seq || !id || !this.editMode()) return;
     this.editing.set({
       ...seq,
       clips: seq.clips.map((c) => (c.id === id ? { ...c, [field]: value } : c)),
@@ -633,10 +550,14 @@ export class TimelineComponent implements OnInit {
     if (!seq) return;
     const clip = seq.clips.find((c) => c.id === clipId);
     if (!clip) return;
+    // Selection alone is allowed for inspection while not editing; only
+    // start a drag when edit mode is on so the user can’t accidentally
+    // shuffle clips around.
+    this.selectedClipId.set(clipId);
+    if (!this.editMode()) return;
     event.preventDefault();
     event.stopPropagation();
     (event.target as Element).setPointerCapture?.(event.pointerId);
-    this.selectedClipId.set(clipId);
     this.dragState = {
       clipId,
       kind,
@@ -652,6 +573,7 @@ export class TimelineComponent implements OnInit {
     event: PointerEvent,
     kind: 'range-start' | 'range-end' | 'range-band',
   ): void {
+    if (!this.editMode()) return;
     event.preventDefault();
     event.stopPropagation();
     (event.target as Element).setPointerCapture?.(event.pointerId);

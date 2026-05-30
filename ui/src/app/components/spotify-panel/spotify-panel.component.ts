@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { SpotifyService } from '../../services/spotify.service';
 import { SpotifyAlbumTrack, SpotifySavedAlbum, SpotifyTrack } from '../../models/spotify.models';
 import { SequenceService } from '../../services/sequence.service';
+import { NowPlayingService } from '../../services/now-playing.service';
 import { LxButton } from '../../ui-components/button/lx-button';
 import { LxTab, LxTabs } from '../../ui-components/tabs/lx-tabs';
 
@@ -45,16 +46,20 @@ interface Playable {
 export class SpotifyPanelComponent implements OnInit {
   private readonly spotify = inject(SpotifyService);
   private readonly sequences = inject(SequenceService);
+  private readonly nowPlaying = inject(NowPlayingService);
 
   protected readonly status = this.spotify.status;
   protected readonly results = this.spotify.searchResults;
   protected readonly lastError = this.spotify.lastError;
   protected readonly busy = this.spotify.busy;
-  protected readonly selectedTrack = this.spotify.selectedTrack;
+  /** Local row highlight — distinct from what's *loaded* into the player. */
+  protected readonly highlightedId = signal<string | null>(null);
+  protected readonly loadedSource = this.nowPlaying.loaded;
 
   protected query = '';
   protected readonly hasSearched = signal(false);
   protected readonly generatingId = signal<string | null>(null);
+  protected readonly loadingId = signal<string | null>(null);
   protected readonly lastBuild = signal<{
     sequence_id: string;
     clip_count: number;
@@ -227,10 +232,31 @@ export class SpotifyPanelComponent implements OnInit {
   async generateAndPlay(p: Playable): Promise<void> {
     this.generatingId.set(p.id);
     try {
-      const built = await this.spotify.generateSequence(p.id);
-      this.lastBuild.set(built);
-      await this.sequences.list().catch(() => undefined);
-      await this.sequences.play(built.sequence_id, false).catch(() => undefined);
+      // Route through NowPlayingService so the footer reflects the loaded
+      // track (and the badge updates) before playback begins.
+      const result = await this.nowPlaying.loadSpotify({
+        id: p.id,
+        uri: p.uri,
+        name: p.name,
+        artists: this.artistNames(p),
+        duration_ms: p.duration_ms,
+        cover: p.cover,
+      });
+      if (result.sequenceId) {
+        this.lastBuild.set({
+          sequence_id: result.sequenceId,
+          clip_count: 0,
+          duration_ms: p.duration_ms,
+        });
+        await this.sequences.list().catch(() => undefined);
+        await this.sequences
+          .play(result.sequenceId, false)
+          .catch(() => undefined);
+      } else if (result.error) {
+        this.spotify.lastError.set(
+          `Loaded for music-only playback (no light show): ${result.error}`,
+        );
+      }
       try {
         await this.spotify.initPlayer();
         await this.waitForDevice();
@@ -249,22 +275,52 @@ export class SpotifyPanelComponent implements OnInit {
   }
 
   /**
-   * Highlight a track. Selection is independent of playback — the Music
-   * Console (in Live Control) reads the selected track and drives transport.
+   * Highlight a row in the panel. Selection is purely a local UI hint — it
+   * does *not* touch the footer Music Console. To make a track appear in
+   * the footer the user must press "Load" (or "Sync Lights").
    */
   protected select(p: Playable): void {
-    this.spotify.selectedTrack.set({
-      id: p.id,
-      uri: p.uri,
-      name: p.name,
-      artists: this.artistNames(p),
-      duration_ms: p.duration_ms,
-      cover: p.cover,
-    });
+    this.highlightedId.set(p.id);
   }
 
   protected isSelected(p: Playable): boolean {
-    return this.selectedTrack()?.id === p.id;
+    return this.highlightedId() === p.id;
+  }
+
+  /**
+   * Load a track into the unified player without auto-playing. Generates
+   * the light-show sequence (or proceeds without one if Deezer has no
+   * BPM); either way the track lands in the footer Music Console where
+   * the user can press Play.
+   */
+  async loadIntoPlayer(p: Playable): Promise<void> {
+    this.loadingId.set(p.id);
+    try {
+      const result = await this.nowPlaying.loadSpotify({
+        id: p.id,
+        uri: p.uri,
+        name: p.name,
+        artists: this.artistNames(p),
+        duration_ms: p.duration_ms,
+        cover: p.cover,
+      });
+      if (!result.sequenceId && result.error) {
+        // Track is still loaded for music-only playback; surface the
+        // analysis failure so the user knows lights won't be in sync.
+        this.spotify.lastError.set(
+          `Loaded for music-only playback (no light show): ${result.error}`,
+        );
+      } else {
+        await this.sequences.list().catch(() => undefined);
+      }
+    } finally {
+      this.loadingId.set(null);
+    }
+  }
+
+  protected isLoaded(p: Playable): boolean {
+    const ld = this.loadedSource();
+    return ld?.source.kind === 'spotify' && ld.source.trackId === p.id;
   }
 
   private async waitForDevice(timeoutMs = 5000): Promise<void> {
