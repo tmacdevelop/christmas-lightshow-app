@@ -1,0 +1,43 @@
+<div class="flex items-center gap-2">
+  <span class="text-base">🎄</span>
+  <h1 class="text-sm font-semibold tracking-tight text-zinc-100">
+    Christmas Light Show
+  </h1>
+</div>
+
+<span
+  class="ml-2 inline-flex items-center gap-2 rounded-full bg-zinc-900 px-2.5 py-0.5 text-xs"
+  [attr.title]="playing() ? 'Show is playing' : 'Show is stopped'"
+>
+  <span
+    class="h-2 w-2 rounded-full"
+    [class.bg-emerald-500]="playing()"
+    [class.bg-zinc-600]="!playing()"
+  ></span>
+  <span class="text-zinc-300">
+    {{ playing() ? 'Playing' : 'Stopped' }}
+  </span>
+</span>
+
+<ng-content select="[appbar-actions]" />
+
+<div class="ml-auto flex items-center gap-2">
+  <button
+    lx-button
+    variant="success"
+    size="sm"
+    [disabled]="playing()"
+    (click)="start()"
+  >
+    ▶ Start
+  </button>
+  <button
+    lx-button
+    variant="secondary"
+    size="sm"
+    [disabled]="!playing()"
+    (click)="stop()"
+  >
+    ■ Stop
+  </button>
+</div>

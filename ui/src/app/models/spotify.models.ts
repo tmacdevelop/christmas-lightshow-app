@@ -106,7 +106,23 @@ export interface PlayerSnapshot {
   position_ms: number;
   /** Track duration (ms) at the time of the snapshot. */
   duration_ms: number;
-  track_id: string | null;
-  track_name: string;
+  trackId: string | null;
+  trackName: string;
   artists: string;
+}
+
+/**
+ * A track the user has selected (highlighted) in the Spotify panel. The
+ * Music Console reads this to know what to load when the user presses play.
+ * Selection is independent of actual playback.
+ */
+export interface SelectedTrack {
+  id: string;
+  uri: string;
+  name: string;
+  /** Comma-joined artist names. */
+  artists: string;
+  duration_ms: number;
+  /** Optional album-art URL. */
+  cover?: string;
 }

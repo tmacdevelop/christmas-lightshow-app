@@ -48,7 +48,7 @@
 }
 
 @if (status().authenticated) {
-  <lx-tabs (activeChange)="onTabChange($event)">
+  <lx-tabs class="min-h-0 flex-1" (activeChange)="onTabChange($event)">
     <!-- ================= Search tab ================= -->
     <ng-template lxTab label="Search">
       <div class="flex h-full min-h-0 flex-col gap-2 p-2">
@@ -237,95 +237,19 @@
       playing on the simulator.
     </p>
   }
-
-  <!-- Now-playing transport (Web Playback SDK) -->
-  @if (snapshot(); as snap) {
-    <div
-      class="mt-2 mx-2 flex flex-col gap-2 rounded border border-green-700/40 bg-green-900/15 p-2"
-    >
-      <div class="flex items-center gap-3">
-        <div class="min-w-0 flex-1">
-          <p class="truncate text-sm font-medium text-zinc-100">
-            {{ snap.track_name || '—' }}
-          </p>
-          <p class="text-[10px] text-zinc-400">
-            {{ formatDuration(snap.position_ms) }} /
-            {{ formatDuration(snap.duration_ms) }}
-            @if (playerReady()) {
-              · synced
-            } @else {
-              · connecting…
-            }
-          </p>
-        </div>
-        <button
-          lx-button
-          size="sm"
-          variant="ghost"
-          (click)="restart()"
-          title="Restart from beginning"
-        >
-          ⏮
-        </button>
-        <button lx-button size="sm" variant="ghost" (click)="togglePlay()">
-          @if (snap.paused) { ▶ Play } @else { ⏸ Pause }
-        </button>
-        <button
-          lx-button
-          size="sm"
-          variant="ghost"
-          (click)="stopPlayback()"
-          title="Pause playback"
-        >
-          ⏹ Stop
-        </button>
-      </div>
-      <input
-        type="range"
-        min="0"
-        [max]="snap.duration_ms || 1"
-        step="500"
-        class="w-full accent-green-500"
-        [value]="snap.position_ms"
-        (input)="onSeekInput(+$any($event.target).value)"
-        aria-label="Seek track position"
-      />
-      <div class="flex items-center gap-2 text-xs text-zinc-400">
-        <button
-          type="button"
-          class="rounded px-2 py-0.5 font-medium"
-          [class.bg-amber-600]="muted()"
-          [class.text-white]="muted()"
-          [class.bg-zinc-800]="!muted()"
-          [class.text-zinc-300]="!muted()"
-          (click)="toggleMute()"
-          [attr.aria-pressed]="muted()"
-          title="Mute Spotify audio so you can hear yourself think while editing"
-        >
-          {{ muted() ? '🔇 Muted' : '🔊 Mute' }}
-        </button>
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          class="flex-1 accent-green-500"
-          [value]="volume()"
-          (input)="onVolumeInput(+$any($event.target).value)"
-          aria-label="Volume"
-        />
-        <span class="w-10 text-right font-mono">
-          {{ (volume() * 100) | number:'1.0-0' }}%
-        </span>
-      </div>
-    </div>
-  }
 }
 
 <!-- Shared row template — used by Search, Liked, and album detail. -->
 <ng-template #trackRow let-p="p">
   <li
-    class="flex items-center gap-3 rounded border border-zinc-800 bg-zinc-900/60 p-2"
+    class="flex cursor-pointer items-center gap-3 rounded border p-2 transition-colors"
+    [class.border-emerald-500]="isSelected(p)"
+    [class.bg-emerald-600/15]="isSelected(p)"
+    [class.border-zinc-800]="!isSelected(p)"
+    [class.bg-zinc-900/60]="!isSelected(p)"
+    [class.hover:border-zinc-700]="!isSelected(p)"
+    [attr.aria-selected]="isSelected(p)"
+    (click)="select(p)"
   >
     @if (p.cover) {
       <img
@@ -349,17 +273,8 @@
     <button
       lx-button
       size="sm"
-      variant="ghost"
-      (click)="playOnly(p)"
-      title="Play this track in Spotify without generating a sequence"
-    >
-      ▶ Play
-    </button>
-    <button
-      lx-button
-      size="sm"
       [disabled]="generatingId() === p.id"
-      (click)="generateAndPlay(p)"
+      (click)="generateAndPlay(p); $event.stopPropagation()"
     >
       @if (generatingId() === p.id) {
         Generating…

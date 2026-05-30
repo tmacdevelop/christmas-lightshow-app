@@ -13,11 +13,11 @@ import {
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 
-import { SequenceService } from '../services/sequence.service';
-import { Clip, ClipColor, Sequence } from '../models/sequence.models';
-import { ShowControlService } from '../services/show-control.service';
-import { EffectKind } from '../models/show.models';
-import { SpotifyService } from '../services/spotify.service';
+import { SequenceService } from '../../services/sequence.service';
+import { Clip, ClipColor, Sequence } from '../../models/sequence.models';
+import { ShowControlService } from '../../services/show-control.service';
+import { EffectKind } from '../../models/show.models';
+import { SpotifyService } from '../../services/spotify.service';
 
 const DEFAULT_DURATION_MS = 10_000;
 const DEFAULT_CLIP_DURATION_MS = 1_000;
@@ -71,8 +71,8 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   standalone: true,
   imports: [FormsModule, DecimalPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './timeline.html',
-  styleUrl: './timeline.css',
+  templateUrl: './timeline.component.html',
+  styleUrl: './timeline.component.css',
 })
 export class TimelineComponent implements OnInit {
   private readonly sequences = inject(SequenceService);
@@ -283,7 +283,7 @@ export class TimelineComponent implements OnInit {
           // tug the engine playhead with it.
           const snap = this.spotify.playerSnapshot();
           const trackId = uri.replace('spotify:track:', '');
-          if (snap && snap.track_id === trackId) {
+          if (snap && snap.trackId === trackId) {
             await this.spotify.seek(offset);
             await this.spotify.resume();
           } else {

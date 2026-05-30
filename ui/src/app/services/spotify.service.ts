@@ -1,6 +1,10 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import {
+  persistedSignal,
+  clampNumber,
+} from '../util/persisted-signal';
 
 export type {
   SpotifyUser,
@@ -18,6 +22,7 @@ export type {
   SpotifySavedAlbumsPage,
   BuildSequenceResponse,
   PlayerSnapshot,
+  SelectedTrack,
 } from '../models/spotify.models';
 import type {
   SpotifyAuthStatus,
@@ -28,6 +33,7 @@ import type {
   SpotifySavedAlbumsPage,
   BuildSequenceResponse,
   PlayerSnapshot,
+  SelectedTrack,
 } from '../models/spotify.models';
 
 const API_BASE = '/api/spotify';
@@ -56,11 +62,25 @@ export class SpotifyService {
   readonly playerReady = signal(false);
   readonly deviceId = signal<string | null>(null);
   readonly playerSnapshot = signal<PlayerSnapshot | null>(null);
+  /** Live-interpolated playhead in ms. Ticks via the sync loop so the UI
+   * progress bar/time advance smoothly between sporadic SDK state events. */
+  readonly livePlayHeadMs = signal(0);
+  /** Track the user has highlighted in the panel. Drives the Music Console;
+   * independent of what is actually playing. Persisted so a refresh keeps the
+   * console populated. */
+  readonly selectedTrack = persistedSignal<SelectedTrack | null>(
+    'mc.selectedTrack',
+    null,
+  );
   /** Current volume 0..1. Mirrors what we last sent to `player.setVolume`. */
-  readonly volume = signal(0.8);
+  readonly volume = persistedSignal('mc.volume', 0.8, {
+    sanitize: clampNumber(0, 1),
+  });
   /** When true, the SDK volume is held at 0 but `volume` remembers the
    * pre-mute level so unmute restores it. */
-  readonly muted = signal(false);
+  readonly muted = persistedSignal('mc.muted', false, {
+    sanitize: (v) => (typeof v === 'boolean' ? v : undefined),
+  });
   private preMuteVolume = 0.8;
 
   private player: SpotifyNS.Player | null = null;
@@ -407,16 +427,17 @@ export class SpotifyService {
       this.snapshotPaused = true;
       return;
     }
-    const t = state.track_window?.current_track;
+    const currentTrack = state.track_window?.current_track;
     this.referencePosition = state.position;
     this.referenceClockMs = performance.now();
     this.snapshotPaused = state.paused;
+    this.livePlayHeadMs.set(state.position);
     this.playerSnapshot.set({
       paused: state.paused,
       position_ms: state.position,
       duration_ms: state.duration,
-      track_id: t?.id ?? null,
-      track_name: t?.name ?? '',
+      trackId: currentTrack?.id ?? null,
+      trackName: currentTrack?.name ?? '',
       artists: '',
     });
   }
@@ -450,6 +471,10 @@ export class SpotifyService {
     try {
       const position_ms = Math.floor(this.interpolatedPosition());
       const playing = !this.snapshotPaused;
+      const duration = this.playerSnapshot()?.duration_ms ?? 0;
+      this.livePlayHeadMs.set(
+        duration > 0 ? Math.min(position_ms, duration) : position_ms,
+      );
       await fetch(PLAYBACK_SYNC_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { persistedSignal, clampNumber } from '../util/persisted-signal';
 
 /**
  * Browser-mic onset detection. Opens a `getUserMedia` audio track, runs a
@@ -34,7 +35,9 @@ export class MicBeatService {
   readonly lastError = signal<string | null>(null);
 
   /** Sensitivity multiplier: pulse if current > mean * threshold. */
-  readonly threshold = signal(1.6);
+  readonly threshold = persistedSignal('mc.micThreshold', 1.6, {
+    sanitize: clampNumber(1.1, 3),
+  });
   /** Minimum gap between detected beats, ms. */
   readonly refractoryMs = signal(140);
 

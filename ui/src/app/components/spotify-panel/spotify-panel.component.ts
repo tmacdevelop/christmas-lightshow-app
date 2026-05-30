@@ -9,11 +9,11 @@ import {
 import { DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { SpotifyService } from '../services/spotify.service';
-import { SpotifyAlbumTrack, SpotifySavedAlbum, SpotifyTrack } from '../models/spotify.models';
-import { SequenceService } from '../services/sequence.service';
-import { LxButton } from '../ui-components/button/lx-button';
-import { LxTab, LxTabs } from '../ui-components/tabs/lx-tabs';
+import { SpotifyService } from '../../services/spotify.service';
+import { SpotifyAlbumTrack, SpotifySavedAlbum, SpotifyTrack } from '../../models/spotify.models';
+import { SequenceService } from '../../services/sequence.service';
+import { LxButton } from '../../ui-components/button/lx-button';
+import { LxTab, LxTabs } from '../../ui-components/tabs/lx-tabs';
 
 /** A row that can be sent to `generateAndPlay`. */
 interface Playable {
@@ -39,7 +39,8 @@ interface Playable {
   standalone: true,
   imports: [FormsModule, DecimalPipe, LxButton, LxTabs, LxTab, NgTemplateOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './spotify-panel.html',
+  host: { class: 'flex h-full min-h-0 flex-col' },
+  templateUrl: './spotify-panel.component.html',
 })
 export class SpotifyPanelComponent implements OnInit {
   private readonly spotify = inject(SpotifyService);
@@ -49,10 +50,7 @@ export class SpotifyPanelComponent implements OnInit {
   protected readonly results = this.spotify.searchResults;
   protected readonly lastError = this.spotify.lastError;
   protected readonly busy = this.spotify.busy;
-  protected readonly playerReady = this.spotify.playerReady;
-  protected readonly snapshot = this.spotify.playerSnapshot;
-  protected readonly volume = this.spotify.volume;
-  protected readonly muted = this.spotify.muted;
+  protected readonly selectedTrack = this.spotify.selectedTrack;
 
   protected query = '';
   protected readonly hasSearched = signal(false);
@@ -250,41 +248,23 @@ export class SpotifyPanelComponent implements OnInit {
     }
   }
 
-  protected async togglePlay(): Promise<void> {
-    await this.spotify.togglePlay().catch(() => undefined);
-  }
-
-  protected async restart(): Promise<void> {
-    await this.spotify.restart().catch(() => undefined);
-  }
-
-  protected async stopPlayback(): Promise<void> {
-    await this.spotify.pause().catch(() => undefined);
-  }
-
-  protected async toggleMute(): Promise<void> {
-    await this.spotify.toggleMute().catch(() => undefined);
-  }
-
-  protected onVolumeInput(value: number): void {
-    this.spotify.setVolume(value).catch(() => undefined);
-  }
-
-  protected onSeekInput(positionMs: number): void {
-    this.spotify.seek(positionMs).catch(() => undefined);
-  }
-
   /**
-   * Audition a Spotify track without generating a sequence. Initialises the
-   * Web Playback SDK on the first call, then routes playback to our device.
+   * Highlight a track. Selection is independent of playback — the Music
+   * Console (in Live Control) reads the selected track and drives transport.
    */
-  protected async playOnly(p: Playable): Promise<void> {
-    try {
-      await this.spotify.ensurePlaying(p.uri);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      this.spotify.lastError.set(`Play failed: ${msg}`);
-    }
+  protected select(p: Playable): void {
+    this.spotify.selectedTrack.set({
+      id: p.id,
+      uri: p.uri,
+      name: p.name,
+      artists: this.artistNames(p),
+      duration_ms: p.duration_ms,
+      cover: p.cover,
+    });
+  }
+
+  protected isSelected(p: Playable): boolean {
+    return this.selectedTrack()?.id === p.id;
   }
 
   private async waitForDevice(timeoutMs = 5000): Promise<void> {

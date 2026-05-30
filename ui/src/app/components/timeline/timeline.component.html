@@ -91,7 +91,7 @@
           Log in to Spotify (in the Spotify tab) to hear this track while editing.
         </span>
       } @else if (spotifySnapshot(); as snap) {
-        <span class="truncate text-zinc-200">{{ snap.track_name || '—' }}</span>
+        <span class="truncate text-zinc-200">{{ snap.trackName || '—' }}</span>
         <span class="font-mono text-[11px] text-zinc-400">
           {{ (snap.position_ms / 1000) | number:'1.1-1' }}s /
           {{ (snap.duration_ms / 1000) | number:'1.1-1' }}s

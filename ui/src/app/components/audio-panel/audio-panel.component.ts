@@ -12,148 +12,16 @@ import {
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 
-import { AudioService } from '../services/audio.service';
-import { AudioTrack } from '../models/audio.models';
-import { LxButton } from '../ui-components/button/lx-button';
+import { AudioService } from '../../services/audio.service';
+import { AudioTrack } from '../../models/audio.models';
+import { LxButton } from '../../ui-components/button/lx-button';
 
 @Component({
   selector: 'app-audio-panel',
   standalone: true,
   imports: [FormsModule, LxButton, DecimalPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <!-- Drop zone / upload -->
-    <div
-      class="mb-4 flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-zinc-600 p-6 transition-colors"
-      [class.border-green-500]="dragging()"
-      (dragover)="onDragOver($event)"
-      (dragleave)="dragging.set(false)"
-      (drop)="onDrop($event)"
-    >
-      @if (uploading()) {
-        <p class="text-sm text-zinc-400">Analysing audio…</p>
-        <div class="mt-2 h-1.5 w-40 overflow-hidden rounded bg-zinc-700">
-          <div class="h-full animate-pulse rounded bg-green-500 w-full"></div>
-        </div>
-      } @else {
-        <p class="mb-2 text-sm text-zinc-400">
-          Drop an MP3 / WAV / OGG / FLAC here, or
-        </p>
-        <button lx-button size="sm" (click)="fileInput.click()">Browse…</button>
-        <input
-          #fileInput
-          type="file"
-          accept="audio/*"
-          class="hidden"
-          (change)="onFileChange($event)"
-        />
-      }
-    </div>
-
-    @if (lastError()) {
-      <p class="mb-3 rounded bg-red-900/40 px-3 py-2 text-xs text-red-300">
-        {{ lastError() }}
-      </p>
-    }
-
-    <!-- Track list -->
-    @if (tracks().length === 0) {
-      <p class="text-center text-xs text-zinc-500">No audio uploaded yet.</p>
-    } @else {
-      <ul class="space-y-2">
-        @for (track of tracks(); track track.id) {
-          <li
-            class="rounded-lg bg-zinc-800 p-3"
-            [class.ring-2]="selectedId() === track.id"
-            [class.ring-green-500]="selectedId() === track.id"
-          >
-            <!-- Track header -->
-            <div class="flex items-start justify-between gap-2">
-              <button
-                class="min-w-0 flex-1 text-left"
-                (click)="selectTrack(track)"
-              >
-                <p class="truncate text-sm font-medium text-zinc-100">
-                  {{ track.filename }}
-                </p>
-                <p class="mt-0.5 text-xs text-zinc-400">
-                  {{ formatDuration(track.analysis.duration_ms) }} ·
-                  {{ track.analysis.bpm | number: '1.0-1' }} BPM ·
-                  {{ track.analysis.beats_ms.length }} beats
-                </p>
-              </button>
-              <button
-                class="shrink-0 text-zinc-500 hover:text-red-400 text-xs"
-                title="Delete"
-                (click)="deleteTrack(track.id)"
-              >✕</button>
-            </div>
-
-            <!-- Expanded view for selected track -->
-            @if (selectedId() === track.id) {
-              <!-- Waveform canvas -->
-              <canvas
-                #waveCanvas
-                class="mt-3 h-16 w-full rounded bg-zinc-900"
-              ></canvas>
-
-              <!-- Playback controls -->
-              <div class="mt-3 flex items-center gap-2">
-                <audio
-                  #audioEl
-                  [src]="audioService.fileUrl(track.id)"
-                  (timeupdate)="onTimeUpdate($event)"
-                  (ended)="playing.set(false)"
-                ></audio>
-
-                <button
-                  lx-button
-                  size="sm"
-                  [variant]="playing() ? 'danger' : 'primary'"
-                  (click)="togglePlay()"
-                >
-                  {{ playing() ? '⏹ Stop' : '▶ Play Audio' }}
-                </button>
-
-                <button
-                  lx-button
-                  size="sm"
-                  variant="secondary"
-                  [disabled]="generating()"
-                  (click)="generate(track.id)"
-                >
-                  {{ generating() ? 'Generating…' : '✨ Auto-generate' }}
-                </button>
-
-                <button
-                  lx-button
-                  size="sm"
-                  variant="success"
-                  (click)="syncPlay(track.id)"
-                >
-                  ▶ Sync Lights
-                </button>
-              </div>
-
-              <!-- Playhead progress bar -->
-              @if (duration() > 0) {
-                <div class="mt-2 h-1 w-full overflow-hidden rounded bg-zinc-700">
-                  <div
-                    class="h-full rounded bg-green-500 transition-all"
-                    [style.width.%]="(currentTime() / duration()) * 100"
-                  ></div>
-                </div>
-                <p class="mt-1 text-right text-xs text-zinc-500">
-                  {{ formatDuration(currentTime() * 1000) }} /
-                  {{ formatDuration(duration() * 1000) }}
-                </p>
-              }
-            }
-          </li>
-        }
-      </ul>
-    }
-  `,
+  templateUrl: './audio-panel.component.html',
 })
 export class AudioPanelComponent implements OnInit, OnDestroy {
   protected readonly audioService = inject(AudioService);
