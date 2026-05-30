@@ -83,14 +83,30 @@ export class SpotifyService {
   });
   private preMuteVolume = 0.8;
 
-  private player: SpotifyNS.Player | null = null;
+  private player: Spotify.Player | null = null;
   private sdkReadyPromise: Promise<void> | null = null;
   /** Reference clock for dead-reckoning playhead between SDK events. */
   private referencePosition = 0;
   private referenceClockMs = 0;
   private snapshotPaused = true;
-  /** ID returned by `setInterval` for the 10 Hz sync push loop. */
+  /**
+   * Suppress pushing `playing: false` to the engine until the SDK has
+   * confirmed actual playback (paused:false) at least once for this
+   * track. Without this, the SDK's initial buffering events (which
+   * report paused:true at position 0) clobber the engine's `playing`
+   * flag immediately after `transport.play()` started the show — leaving
+   * the simulator stuck at black with `external_sync:true`,
+   * `playing:false`. We only start mirroring the SDK's pause state after
+   * the first real "playing" event.
+   */
+  private hasSeenPlaying = false;
+  /** ID returned by `setInterval` for the 30s heartbeat push loop. */
   private syncTimer: number | null = null;
+  /**
+   * Local-only animation timer that ticks {@link livePlayHeadMs} so the
+   * UI seek bar stays smooth between (now-rare) network pushes. No fetch.
+   */
+  private uiTickTimer: number | null = null;
 
   async refreshStatus(): Promise<SpotifyAuthStatus> {
     return this.run(async () => {
@@ -318,6 +334,7 @@ export class SpotifyService {
     this.playerReady.set(false);
     this.deviceId.set(null);
     this.playerSnapshot.set(null);
+    this.hasSeenPlaying = false;
   }
 
   /**
@@ -422,7 +439,7 @@ export class SpotifyService {
 
   // -- internal: playhead bookkeeping --------------------------------------
 
-  private onPlayerState(state: SpotifyNS.PlayerState | null): void {
+  private onPlayerState(state: Spotify.PlaybackState | null): void {
     if (!state) {
       this.snapshotPaused = true;
       return;
@@ -431,19 +448,47 @@ export class SpotifyService {
     this.referencePosition = state.position;
     this.referenceClockMs = performance.now();
     this.snapshotPaused = state.paused;
+    // Once the SDK reports actual playback for this track, allow future
+    // paused-state pushes to mirror onto the engine. Until then, we treat
+    // SDK paused as a buffering/init transient and don't override the
+    // engine's `playing` flag (set by /sequences/:id/play).
+    if (!state.paused) {
+      this.hasSeenPlaying = true;
+    }
     this.livePlayHeadMs.set(state.position);
+    // Spotify track relinking: when the catalogue serves an alternate
+    // master (region-specific re-release, etc.), `current_track.id` is
+    // the served master's id and `linked_from.id` carries the id we
+    // originally requested. Surface the requested id so callers that
+    // matched on it stay in sync.
+    const requestedId = currentTrack?.linked_from?.id ?? currentTrack?.id ?? null;
+    // Reset the "has played" gate when the track actually changes, so a
+    // freshly-loaded track gets its own buffering grace period before
+    // its initial paused state is mirrored onto the engine.
+    const prevId = this.playerSnapshot()?.trackId ?? null;
+    if (requestedId !== prevId) {
+      this.hasSeenPlaying = !state.paused;
+    }
     this.playerSnapshot.set({
       paused: state.paused,
       position_ms: state.position,
       duration_ms: state.duration,
-      trackId: currentTrack?.id ?? null,
+      trackId: requestedId,
       trackName: currentTrack?.name ?? '',
       artists: '',
     });
+    // Push the new anchor to the server now — this is the only time
+    // anything changed. Between events the server extrapolates from this
+    // anchor using its own wall clock, so we don't need to keep ticking.
+    void this.pushPlayhead();
   }
 
-  /** Latest interpolated playhead in ms (from the last SDK reference + wall clock). */
-  private interpolatedPosition(): number {
+  /**
+   * Latest interpolated playhead in ms (from the last SDK reference + wall
+   * clock). Public so render loops (e.g. the timeline) can pull a smooth,
+   * monotonic position without re-reading signals on every animation frame.
+   */
+  interpolatedPosition(): number {
     if (this.snapshotPaused) return this.referencePosition;
     const elapsed = performance.now() - this.referenceClockMs;
     return this.referencePosition + Math.max(0, elapsed);
@@ -451,9 +496,27 @@ export class SpotifyService {
 
   private startSyncLoop(): void {
     if (this.syncTimer != null) return;
+    // Event-driven sync: we only POST to /playback/sync on actual SDK
+    // events (play/pause/seek/track-change — see {@link onPlayerState}).
+    // Between events the server extrapolates from the last anchor with
+    // its own clock, so the only reason to tick is a defensive heartbeat
+    // that proves the SDK is still alive. 30s is plenty.
     this.syncTimer = window.setInterval(() => {
       this.pushPlayhead();
-    }, 100);
+    }, 30_000);
+    // Local UI tick (no network) — keeps the seek bar smooth. 4 Hz looks
+    // continuous enough at typical seek-bar widths and is essentially
+    // free.
+    if (this.uiTickTimer == null) {
+      this.uiTickTimer = window.setInterval(() => {
+        if (!this.playerSnapshot()) return;
+        const position_ms = Math.floor(this.interpolatedPosition());
+        const duration = this.playerSnapshot()?.duration_ms ?? 0;
+        this.livePlayHeadMs.set(
+          duration > 0 ? Math.min(position_ms, duration) : position_ms,
+        );
+      }, 250);
+    }
   }
 
   private stopSyncLoop(): void {
@@ -461,12 +524,22 @@ export class SpotifyService {
       window.clearInterval(this.syncTimer);
       this.syncTimer = null;
     }
+    if (this.uiTickTimer != null) {
+      window.clearInterval(this.uiTickTimer);
+      this.uiTickTimer = null;
+    }
   }
 
   private inflightSync = false;
   private async pushPlayhead(): Promise<void> {
     if (this.inflightSync) return;
     if (!this.playerSnapshot()) return;
+    // Until the SDK has confirmed this track is actually playing, don't
+    // touch the engine: otherwise we'd lock its external playhead to
+    // position 0 (and possibly toggle `playing:false`) during the
+    // initial buffering events fired right after `play()`/`load()`,
+    // freezing the simulator at black with `external_sync:true`.
+    if (!this.hasSeenPlaying) return;
     this.inflightSync = true;
     try {
       const position_ms = Math.floor(this.interpolatedPosition());
@@ -479,12 +552,10 @@ export class SpotifyService {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ position_ms, playing }),
-        // Avoid creating a new credentials prompt on every tick.
         credentials: 'same-origin',
       });
     } catch {
-      // Silent — the show will simply stop tracking. Surfacing every
-      // network blip would be noisier than helpful.
+      // Silent — the next SDK event (or heartbeat) will retry.
     } finally {
       this.inflightSync = false;
     }

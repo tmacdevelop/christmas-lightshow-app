@@ -129,6 +129,11 @@ struct SequencePlayback {
     /// when an external source (e.g. the Spotify Web Playback SDK) is
     /// driving timing.
     external_playhead_ms: Option<u64>,
+    /// `EffectContext::elapsed_secs` at the moment {@link external_playhead_ms}
+    /// was last updated. The engine extrapolates between pushes so the
+    /// playhead keeps advancing even though the SDK only emits events on
+    /// state transitions (and a coarse heartbeat).
+    external_anchor_secs: f32,
 }
 
 /// Live show state mutated by the REST API and read by the engine.
@@ -293,6 +298,7 @@ impl ShowState {
             duration_ms,
             last_position_ms: 0,
             external_playhead_ms: None,
+            external_anchor_secs: f32::NAN,
         });
         self.playing = true;
     }
@@ -304,6 +310,12 @@ impl ShowState {
     pub fn set_external_playhead(&mut self, position_ms: u64) {
         if let Some(sp) = self.sequence.as_mut() {
             sp.external_playhead_ms = Some(position_ms);
+            // The next tick will reseed the anchor against its own
+            // `elapsed_secs`, so the engine extrapolates from this push
+            // until the next one arrives. Without this the playhead
+            // would freeze between SDK events (which fire only on
+            // state transitions plus a 30s heartbeat).
+            sp.external_anchor_secs = f32::NAN;
         }
     }
 
@@ -373,9 +385,15 @@ impl ShowState {
 fn tick_sequence(sp: &mut SequencePlayback, ctx: EffectContext, out: &mut [Rgb]) {
     let raw_ms = match sp.external_playhead_ms {
         Some(ms) => {
-            // External clock authoritative: keep started_at NAN so a later
-            // clear_external_playhead reseeds correctly.
-            ms
+            // External clock authoritative for the *anchor*, but the engine
+            // extrapolates between pushes using its own elapsed_secs so the
+            // playhead keeps advancing while the SDK is silent (events only
+            // fire on state transitions + a coarse heartbeat).
+            if sp.external_anchor_secs.is_nan() {
+                sp.external_anchor_secs = ctx.elapsed_secs;
+            }
+            let delta_secs = (ctx.elapsed_secs - sp.external_anchor_secs).max(0.0);
+            ms.saturating_add((delta_secs * 1000.0) as u64)
         }
         None => {
             if sp.started_at_secs.is_nan() {

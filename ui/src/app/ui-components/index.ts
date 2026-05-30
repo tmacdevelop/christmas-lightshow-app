@@ -5,3 +5,8 @@ export { LxPanel } from './panel/lx-panel';
 export { LxTab, LxTabs } from './tabs/lx-tabs';
 export { LxSplitter } from './splitter/lx-splitter';
 export type { LxSplitterOrientation } from './splitter/lx-splitter';
+export { LxModal } from './modal/lx-modal';
+export type { LxModalSize } from './modal/lx-modal';
+export { LxConfirmModal } from './modal/lx-confirm-modal';
+export type { LxConfirmVariant } from './modal/lx-confirm-modal';
+export { LxModalController } from './modal/lx-modal-controller';

@@ -1,77 +1,53 @@
-<!-- Now-playing info -->
-<div class="flex min-w-0 items-center gap-3" style="flex: 0 0 16rem">
-  @if (selectedTrack(); as sel) {
-    @if (sel.cover) {
-      <img
-        [src]="sel.cover"
-        alt=""
-        class="h-10 w-10 flex-none rounded object-cover"
-      />
-    } @else {
-      <div class="h-10 w-10 flex-none rounded bg-zinc-800"></div>
-    }
-    <div class="min-w-0">
-      <p class="truncate text-sm font-medium text-zinc-100">
-        {{ sel.name }}
-      </p>
-      <p class="truncate text-xs text-zinc-400">{{ sel.artists }}</p>
-    </div>
-  } @else {
-    <div class="flex items-center gap-2 text-zinc-500">
-      <span class="text-lg">🎵</span>
-      <span class="text-xs">No song selected</span>
-    </div>
-  }
-</div>
-
-<!-- Transport + seek -->
-<div class="flex min-w-0 flex-1 flex-col gap-1">
-  <div class="flex items-center justify-center gap-2">
-    <button
-      type="button"
-      class="rounded px-2 py-1 text-sm hover:bg-zinc-800 disabled:opacity-40"
-      (click)="restart()"
-      [disabled]="!selectionIsLoaded()"
-      title="Restart from beginning"
-    >
-      ⏮
-    </button>
-    <button
-      type="button"
-      class="rounded bg-emerald-600 px-3 py-1 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-40"
-      (click)="playPause()"
-      [disabled]="!selectedTrack()"
-    >
-      @if (selectionIsLoaded() && !snapshot()?.paused) {
-        ⏸ Pause
+<!-- Row 1: now-playing · seek bar · volume -->
+<div class="flex min-h-0 flex-1 items-center gap-4">
+  <!-- Now-playing info -->
+  <div class="flex min-w-0 items-center gap-3" style="flex: 0 0 16rem">
+    @if (selectedTrack(); as sel) {
+      @if (sel.cover) {
+        <img
+          [src]="sel.cover"
+          alt=""
+          class="h-9 w-9 flex-none rounded object-cover"
+        />
       } @else {
-        ▶ Play
+        <div class="h-9 w-9 flex-none rounded bg-zinc-800"></div>
       }
-    </button>
-    <button
-      type="button"
-      class="rounded px-2 py-1 text-sm hover:bg-zinc-800 disabled:opacity-40"
-      (click)="stopPlayback()"
-      [disabled]="!selectionIsLoaded()"
-      title="Pause playback"
-    >
-      ⏹
-    </button>
-    @if (selectedTrack()) {
-      <span class="ml-2 text-[10px] uppercase tracking-wider text-zinc-500">
-        @if (!selectionIsLoaded()) {
-          ready
-        } @else if (playerReady()) {
-          synced
-        } @else {
-          connecting…
+      <div class="min-w-0">
+        <p class="truncate text-sm font-medium text-zinc-100">
+          {{ sel.name }}
+        </p>
+        <p class="truncate text-xs text-zinc-400">{{ sel.artists }}</p>
+        @if (loadedSource(); as ld) {
+          <p
+            class="truncate text-[10px] uppercase tracking-wider"
+            [class.text-emerald-400]="ld.source.kind === 'upload' || ld.source.sequenceId"
+            [class.text-amber-400]="ld.source.kind === 'spotify' && !ld.source.sequenceId"
+            [title]="
+              ld.source.kind === 'spotify' && !ld.source.sequenceId
+                ? 'Loaded for music-only playback (no light show)'
+                : 'Loaded — light show ready'
+            "
+          >
+            @if (ld.source.kind === 'spotify' && !ld.source.sequenceId) {
+              ● music only
+            } @else {
+              ● loaded
+            }
+          </p>
         }
-      </span>
+      </div>
+    } @else {
+      <div class="flex items-center gap-2 text-zinc-500">
+        <span class="text-lg">🎵</span>
+        <span class="text-xs">No song selected</span>
+      </div>
     }
   </div>
-  <div class="flex items-center gap-2">
+
+  <!-- Seek bar -->
+  <div class="flex min-w-0 flex-1 items-center gap-2">
     <span class="w-10 text-right font-mono text-[10px] text-zinc-400">
-      {{ formatDuration(selectionIsLoaded() ? livePlayHeadMs() : 0) }}
+      {{ formatDuration(selectionIsLoaded() ? seekDisplayMs() : 0) }}
     </span>
     <input
       type="range"
@@ -79,46 +55,153 @@
       [max]="consoleDurationMs() || 1"
       step="500"
       class="min-w-0 flex-1 accent-green-500"
-      [value]="selectionIsLoaded() ? livePlayHeadMs() : 0"
+      [value]="selectionIsLoaded() ? seekDisplayMs() : 0"
       [disabled]="!selectionIsLoaded()"
-      (input)="onSeekInput(+$any($event.target).value)"
+      (input)="onSeekScrub(+$any($event.target).value)"
+      (change)="onSeekCommit(+$any($event.target).value)"
       aria-label="Seek track position"
     />
     <span class="w-10 font-mono text-[10px] text-zinc-400">
       {{ formatDuration(consoleDurationMs()) }}
     </span>
   </div>
+
+  <!-- Volume -->
+  <div
+    class="flex items-center gap-2 text-xs text-zinc-400"
+    style="flex: 0 0 12rem"
+  >
+    <button
+      type="button"
+      class="rounded px-2 py-0.5 font-medium"
+      [class.bg-amber-600]="muted()"
+      [class.text-white]="muted()"
+      [class.bg-zinc-800]="!muted()"
+      [class.text-zinc-300]="!muted()"
+      (click)="toggleMute()"
+      [attr.aria-pressed]="muted()"
+      title="Mute Spotify audio"
+    >
+      {{ muted() ? '🔇' : '🔊' }}
+    </button>
+    <input
+      type="range"
+      min="0"
+      max="1"
+      step="0.01"
+      class="min-w-0 flex-1 accent-green-500"
+      [value]="volume()"
+      (input)="onVolumeInput(+$any($event.target).value)"
+      aria-label="Volume"
+    />
+    <span class="w-9 text-right font-mono">
+      {{ (volume() * 100) | number: '1.0-0' }}%
+    </span>
+  </div>
 </div>
 
-<!-- Volume -->
-<div
-  class="flex items-center gap-2 text-xs text-zinc-400"
-  style="flex: 0 0 14rem"
->
-  <button
-    type="button"
-    class="rounded px-2 py-0.5 font-medium"
-    [class.bg-amber-600]="muted()"
-    [class.text-white]="muted()"
-    [class.bg-zinc-800]="!muted()"
-    [class.text-zinc-300]="!muted()"
-    (click)="toggleMute()"
-    [attr.aria-pressed]="muted()"
-    title="Mute Spotify audio"
+<!-- Row 2: unified transport · show indicator · loop · range -->
+<div class="flex min-h-0 items-center gap-3 text-xs">
+  <!-- Sync / mode badge -->
+  <span
+    class="inline-flex w-16 shrink-0 justify-center text-[10px] uppercase tracking-wider"
+    [class.text-emerald-400]="showPlaying()"
+    [class.text-zinc-500]="!showPlaying()"
   >
-    {{ muted() ? '🔇' : '🔊' }}
-  </button>
-  <input
-    type="range"
-    min="0"
-    max="1"
-    step="0.01"
-    class="min-w-0 flex-1 accent-green-500"
-    [value]="volume()"
-    (input)="onVolumeInput(+$any($event.target).value)"
-    aria-label="Volume"
-  />
-  <span class="w-9 text-right font-mono">
-    {{ (volume() * 100) | number: '1.0-0' }}%
+    @if (showPlaying()) {
+      ▶ show
+    } @else if (selectedTrack()) {
+      @if (!selectionIsLoaded()) {
+        ready
+      } @else if (playerReady()) {
+        synced
+      } @else {
+        connecting…
+      }
+    } @else {
+      idle
+    }
   </span>
+
+  <!-- Transport buttons (single source for both music + lights) -->
+  <div class="flex items-center gap-1">
+    <button
+      type="button"
+      class="rounded px-2 py-1 text-sm hover:bg-zinc-800 disabled:opacity-40"
+      (click)="restart()"
+      [disabled]="!showLoaded() && !selectionIsLoaded()"
+      title="Restart from the beginning (or range start)"
+    >
+      ⏮
+    </button>
+    <button
+      type="button"
+      class="rounded bg-emerald-600 px-3 py-1 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-40"
+      (click)="playPause()"
+      [disabled]="!canPlay()"
+      [title]="showLoaded() ? 'Play music + light show' : 'Play track'"
+    >
+      @if (isPlaying()) {
+        ⏸ Pause
+      } @else if (showLoaded()) {
+        ▶ Play show
+      } @else {
+        ▶ Play
+      }
+    </button>
+    <button
+      type="button"
+      class="rounded px-2 py-1 text-sm hover:bg-zinc-800 disabled:opacity-40"
+      (click)="stopAll()"
+      [disabled]="!isPlaying() && !showPlaying()"
+      title="Stop playback (and the light show, if running)"
+    >
+      ⏹
+    </button>
+  </div>
+
+  <!-- Show controls -->
+  <div class="ml-2 flex min-w-0 items-center gap-2 border-l border-zinc-800 pl-3">
+    <span class="text-[10px] uppercase tracking-wider text-zinc-500">Show</span>
+    @if (showName(); as name) {
+      <span
+        class="max-w-[16rem] truncate text-zinc-300"
+        [class.text-emerald-300]="showPlaying()"
+        [title]="name"
+      >
+        {{ name }}
+      </span>
+    } @else {
+      <span class="text-zinc-600">none loaded</span>
+    }
+
+    <label class="ml-2 flex items-center gap-1 text-zinc-400">
+      <input
+        type="checkbox"
+        class="accent-emerald-500"
+        [checked]="looping()"
+        (change)="onLoopingChange($any($event.target).checked)"
+      />
+      Loop
+    </label>
+
+    <button
+      type="button"
+      class="rounded px-2 py-1 font-medium disabled:opacity-40"
+      [class.bg-amber-600]="rangeActive()"
+      [class.text-white]="rangeActive()"
+      [class.bg-zinc-800]="!rangeActive()"
+      [class.text-zinc-300]="!rangeActive()"
+      (click)="toggleRange()"
+      [disabled]="!showLoaded()"
+      [attr.aria-pressed]="rangeActive()"
+      title="Toggle a loop range; drag the markers on the timeline to adjust"
+    >
+      @if (rangeActive()) {
+        Range {{ rangeStartMs() }}–{{ rangeEndMs() }}ms
+      } @else {
+        Set range
+      }
+    </button>
+  </div>
 </div>

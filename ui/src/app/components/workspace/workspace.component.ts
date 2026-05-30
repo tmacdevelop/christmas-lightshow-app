@@ -48,7 +48,7 @@ import { persistedSignal, clampNumber } from '../../util/persisted-signal';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class:
-      'flex min-h-screen w-full flex-col overflow-x-hidden bg-zinc-950 text-zinc-100 pb-16',
+      'flex min-h-screen w-full flex-col overflow-x-hidden bg-zinc-950 text-zinc-100 pb-24',
   },
   templateUrl: './workspace.component.html',
 })

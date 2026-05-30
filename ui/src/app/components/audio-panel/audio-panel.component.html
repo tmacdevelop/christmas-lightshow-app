@@ -104,6 +104,27 @@
             <button
               lx-button
               size="sm"
+              variant="secondary"
+              [disabled]="loadingId() === track.id"
+              (click)="loadIntoPlayer(track)"
+              [title]="
+                isLoaded(track)
+                  ? 'Already loaded — press Play in the footer'
+                  : 'Load into the player (does not auto-play)'
+              "
+            >
+              @if (loadingId() === track.id) {
+                Loading…
+              } @else if (isLoaded(track)) {
+                ✓ Loaded
+              } @else {
+                Load
+              }
+            </button>
+
+            <button
+              lx-button
+              size="sm"
               variant="success"
               (click)="syncPlay(track.id)"
             >
